@@ -1,0 +1,95 @@
+{
+    "users": [
+      {
+        "id": 1,
+        "firstName": "Ana",
+        "lastName": "Silva",
+        "email": "ana.silva@email.com",
+        "phone": "+34 123 456 789",
+        "password": "hashed_password",
+        "type": "participant",
+        "registeredActivities": [1, 2]
+      },
+      {
+        "id": 2,
+        "firstName": "Rafaela",
+        "lastName": "Nogueira",
+        "email": "rafa.nog@email.com",
+        "phone": "+34 123 645 789",
+        "password": "hashed_password",
+        "type": "participant",
+        "registeredActivities": [1, 3]
+      },
+      {
+        "id": 3,
+        "firstName": "Carlos",
+        "lastName": "Pérez",
+        "email": "carlos.perez@email.com",
+        "phone": "+34 987 654 321",
+        "password": "hashed_password",
+        "type": "organizer",
+        "createdActivities": [2, 4]
+      }
+    ],
+    "activities": [
+      {
+        "id": 1,
+        "title": "Music Concert",
+        "image": "url_da_imagem",
+        "dates": ["2025-04-10", "2025-05-10"],
+        "description": "An incredible concert with renowned artists.",
+        "location": "Madrid, Spain",
+        "category": "Entertainment and Tickets",
+        "accessibilities": ["Wheelchair adaptations", "Sign language interpreter"],
+        "maxRegistrations": 100,
+        "organizer": 2,
+        "participants": [1],
+        "reviews": [1]
+      },
+      {
+        "id": 2,
+        "title": "Technology Lecture",
+        "image": "url_da_imagem",
+        "dates": ["2025-05-15"],
+        "description": "Discussion on technological innovations.",
+        "location": "São Paulo, São Paulo",
+        "category": "Workshops and Classes",
+        "accessibilities": ["Wheelchair adaptations"],
+        "maxRegistrations": 50,
+        "organizer": 2,
+        "participants": [],
+        "reviews": []
+      },
+      {
+        "id": 6,
+        "title": "Ecological Walk",
+        "image": "url_da_imagem",
+        "dates": ["2025-07-05"],
+        "description": "A guided walk through ecological trails with explanations about flora and fauna.",
+        "departureLocation": "Doñana Natural Park, Spain",
+        "arrivalLocation": "El Acebuche Visitor Center, Spain",
+        "category": "Sports and Nature",
+        "accessibilities": [],
+        "maxRegistrations": 20,
+        "organizer": 2,
+        "participants": [1, 2],
+        "reviews": []
+      }
+    ],
+    "reviews": [
+      {
+        "id": 1,
+        "description": "Wonderful event, well organized!",
+        "stars": 5,
+        "activity": 1,
+        "participant": 1
+      },
+      {
+        "id": 2,
+        "description": "Wonderful event, well organized!",
+        "stars": 4,
+        "activity": 1,
+        "participant": 2
+      }
+    ]
+  }
