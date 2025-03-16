@@ -3,9 +3,9 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import React from 'react';
 import { Colors } from '../../constants/Colors';
 
-const BtnIniciar = ({ titulo }) => {
+const BtnIniciar = ({ titulo, onPress }) => {
   return (
-    <TouchableOpacity style={styles.button}>
+    <TouchableOpacity style={styles.button} onPress={onPress}>
       <View style={styles.content}>
         <Text style={styles.texto}>{titulo}</Text>
         <Icon name="arrowright" size={24} color={Colors.mainColor} />
