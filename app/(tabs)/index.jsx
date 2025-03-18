@@ -9,7 +9,7 @@ const App = () => {
   return (
       <Stack.Navigator>
         <Stack.Screen name="iniciar" options={{ headerShown: false }} component={Iniciar} />
-        <Stack.Screen name="cadastro" component={Cadastro} />
+        <Stack.Screen name="cadastro" options={{ headerShown: false }} component={Cadastro} />
       </Stack.Navigator>
   )
 }
