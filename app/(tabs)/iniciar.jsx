@@ -6,7 +6,7 @@ import Btn_iniciar from "../../components/btn_iniciar/btn_iniciar";
 const Iniciar = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Banner />
+      <Banner/>
       <View style={styles.botoesContainer}>
         <Btn_iniciar titulo="Começar" onPress={() => navigation.navigate('cadastro')}/>
         <Btn_iniciar titulo="Login" onPress={() => alert('Botão clicado!')}/>
