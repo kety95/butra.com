@@ -6,6 +6,12 @@ import IconSearch from 'react-native-vector-icons/AntDesign';
 import IconCalendar from 'react-native-vector-icons/Feather';
 import DatePicker from 'react-native-modern-datepicker';
 import { getFormatedDate } from 'react-native-modern-datepicker';
+import Autocomplete from 'react-native-autocomplete-input';
+
+const capitais = [
+    "Buenos Aires", "Brasília", "Paris", "Londres", "Roma", "Madri", 
+    "Lisboa", "Berlim", "Moscou", "Pequim", "Tóquio", "Washington", "Ottawa"
+];
 
 const Pesquisa = ({ navigation }) => {
     const today = new Date();
@@ -31,17 +37,52 @@ const Pesquisa = ({ navigation }) => {
         setOpen(false);
     }
 
+    const [query, setQuery] = useState('');
+    const [filteredCapitais, setFilteredCapitais] = useState([]);
+
+    function handleSearch(text) {
+        setQuery(text);
+        if (text.length > 0) {
+            const matches = capitais.filter(capital => 
+                capital.toLowerCase().startsWith(text.toLowerCase())
+            );
+            setFilteredCapitais(matches);
+        } else {
+            setFilteredCapitais([]);
+        }
+    }
+
+    function handleSelectCity(city) {
+        setQuery(city);
+        setFilteredCapitais([]);
+    }
+
     return (
         <View>
             <Banner tela="pesquisa" navigation={navigation} />
+            
             <View style={styles.fundo}>
                 <View style={styles.searchCity}>
                     <IconSearch name="search1" size={24} />
-                    <TextInput
-                        style={styles.input}
+                    <Autocomplete style={styles.autocomplete}
+                        data={filteredCapitais}
+                        value={query}
+                        onChangeText={handleSearch}
                         placeholder="Para onde você vai?"
-                        onChangeText={(text) => console.log(text)}
+                        flatListProps={{
+                            keyboardShouldPersistTaps: "handled",
+                            data: filteredCapitais,
+                            keyExtractor: (item, index) => index.toString(),
+                            renderItem: ({ item }) => (
+                                <TouchableOpacity onPress={() => handleSelectCity(item)}>
+                                    <Text style={{ padding: 10}}>{item}</Text>
+                                </TouchableOpacity>
+                            ),
+                        }}
+                        containerStyle={{ flex: 1 }}
+                        inputContainerStyle={{ borderWidth: 0, backgroundColor: 'white' }}
                     />
+
                 </View>
 
                 <TouchableOpacity style={styles.searchDate} onPress={handleOnPress}>
@@ -107,6 +148,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingTop: 2,
         paddingLeft: 6,
+        paddingRight: 1.5,
+        paddingBottom: 2,
         borderTopLeftRadius: 8,
         borderTopRightRadius: 8,
     },
@@ -180,5 +223,9 @@ const styles = StyleSheet.create({
         color: 'black',
         fontWeight: 'bold',
     },
+    autocomplete: {
+        // backgroundColor: 'red',
+        width: '80%',
+    }
 
 }) 
