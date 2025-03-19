@@ -1,49 +1,95 @@
-import { View, TextInput, StyleSheet, Button, TouchableOpacity, Text } from 'react-native'
-import { Colors } from '../../constants/Colors'
-import Banner from '../../components/banner/banner'
-import React from 'react'
-import IconSearch from 'react-native-vector-icons/AntDesign'
-import IconCalendar from 'react-native-vector-icons/Feather'
-import { Formik } from 'formik';
+import { View, TextInput, StyleSheet, TouchableOpacity, Text, Modal } from 'react-native';
+import { Colors } from '../../constants/Colors';
+import Banner from '../../components/banner/banner';
+import React, { useState } from 'react';
+import IconSearch from 'react-native-vector-icons/AntDesign';
+import IconCalendar from 'react-native-vector-icons/Feather';
+import DatePicker from 'react-native-modern-datepicker';
+import { getFormatedDate } from 'react-native-modern-datepicker';
 
-const Pesquisa = ({navigation}) => {
-  return (
-    <View>
-        <Banner tela="pesquisa" navigation={navigation}/>
-        <Formik>
+const Pesquisa = ({ navigation }) => {
+    const today = new Date();
+    const startDate = getFormatedDate(today.setDate(today.getDate() + 1), 'YYYY/MM/DD');
+
+    const [open, setOpen] = useState(false);
+    const [date, setDate] = useState('');
+
+    function handleOnPress() {
+        setOpen(true);
+    }
+
+
+    function handleChange(propDate) {
+        if (propDate !== date) {
+            setDate(propDate);
+            setOpen(false);
+        }
+    }
+
+    function handleClearDate() {
+        setDate('');
+        setOpen(false);
+    }
+
+    return (
+        <View>
+            <Banner tela="pesquisa" navigation={navigation} />
             <View style={styles.fundo}>
                 <View style={styles.searchCity}>
-                    <IconSearch name="search1" size={24}/>
+                    <IconSearch name="search1" size={24} />
                     <TextInput
                         style={styles.input}
                         placeholder="Para onde você vai?"
-                        // onChangeText={handleChange('name')}
-                        // onBlur={handleBlur('name')}
-                        // value={values.name}
+                        onChangeText={(text) => console.log(text)}
                     />
                 </View>
 
-                <View style={styles.searchDate}>
-                    <IconCalendar name="calendar" size={24}/>
+                <TouchableOpacity style={styles.searchDate} onPress={handleOnPress}>
+                    <IconCalendar name="calendar" size={24} />
                     <TextInput
                         style={styles.input}
                         placeholder="Qualquer data"
-                        // onChangeText={handleChange('name')}
-                        // onBlur={handleBlur('name')}
-                        // value={values.name}
+                        value={date || 'Qualquer data'}
+                        editable={false}
                     />
-                </View>
+                </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.btn}>
-                        <Text style={styles.btn_txt}>Pesquisar</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity style={styles.btn}>
+                    <Text style={styles.btn_txt}>Pesquisar</Text>
+                </TouchableOpacity>
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={open}
+                    onRequestClose={() => setOpen(false)}    
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                        <View style={styles.buttonContainer}>
+                                <TouchableOpacity style={styles.clearButton} onPress={handleClearDate}>
+                                    <Text style={styles.clearText}>Limpar</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={styles.closeButton} onPress={() => setOpen(false)}>
+                                    <Text style={styles.closeText}>Fechar</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <DatePicker
+                                mode="calendar"
+                                minimumDate={startDate}
+                                selected={date}
+                                onSelectedChange={handleChange}
+                            />
+                        </View>
+                    </View>
+                </Modal>
             </View>
-        </Formik>
-    </View>
-  )
-}
+        </View>
+    );
+};
+export default Pesquisa;
 
-export default Pesquisa
 
 const margin = 8;
 const styles = StyleSheet.create({
@@ -86,5 +132,53 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 16,
         fontWeight: 500,
-    }
+    },
+    input:{
+        flex: 1,
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalView: {
+        width: '80%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        marginTop: 20,
+        gap: 10,
+    },
+    clearButton: {
+        backgroundColor: '#ff6666',
+        padding: 10,
+        borderRadius: 5,
+    },
+    closeButton: {
+        backgroundColor: '#ccc',
+        padding: 10,
+        borderRadius: 5,
+    },
+    clearText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    closeText: {
+        color: 'black',
+        fontWeight: 'bold',
+    },
+
 }) 
