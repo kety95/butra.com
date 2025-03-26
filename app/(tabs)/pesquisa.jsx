@@ -9,7 +9,7 @@ import { getFormatedDate } from 'react-native-modern-datepicker';
 import Autocomplete from 'react-native-autocomplete-input';
 
 const capitais = [
-    "Buenos Aires", "Brasília", "Paris", "Londres", "Roma", "Madri", 
+    "Buenos Aires", "São Paulo", "Brasília", "Paris", "Londres", "Roma", "Madrid", 
     "Lisboa", "Berlim", "Moscou", "Pequim", "Tóquio", "Washington", "Ottawa"
 ];
 
@@ -95,7 +95,10 @@ const Pesquisa = ({ navigation }) => {
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.btn}>
+                <TouchableOpacity 
+                    style={styles.btn} 
+                    onPress={() => navigation.navigate('listaatividades', { date, location: query })}
+                >
                     <Text style={styles.btn_txt}>Pesquisar</Text>
                 </TouchableOpacity>
 
@@ -224,8 +227,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     autocomplete: {
-        // backgroundColor: 'red',
         width: '80%',
     }
-
 }) 
