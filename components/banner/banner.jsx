@@ -9,9 +9,11 @@ const Banner = ({tela, navigation}) => {
             <View style={styles.container}>
                 <View style={styles.banner_pesq}>
                     <Text type="title" style={styles.txt_pesq}>Butra.com</Text>
-                    <Icon name="bell-outline" size={24} style={styles.color} />
+                    <Icon name="bell-outline" size={24} style={styles.color}
+                        onPress={() => navigation.navigate('notificacoes')}
+                    />
                 </View>
-                <Menu_sup onPress={() => navigation.navigate('cadastro')}/>
+                <Menu_sup onPress={() => navigation.navigate('minhasAtividades')}/>
             </View>
         )
     }else{
