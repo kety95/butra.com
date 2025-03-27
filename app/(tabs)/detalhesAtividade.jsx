@@ -1,14 +1,15 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import IconLocation from 'react-native-vector-icons/EvilIcons';
+import IconStar from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '../../constants/Colors';
 import AcessibilidadeInfo from '../../components/acessibilidadeInfo';
+import BackButton from '../../components/backButton';
 
 const DetalhesAtividade = ({ route }) => {
     const navigation = useNavigation();
-    const { atividade } = route.params;
+    const { atividade, reviewsCount } = route.params;
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -18,17 +19,28 @@ const DetalhesAtividade = ({ route }) => {
 
     return (
         <>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                <Icon name="arrowleft" color="white" size={24} />
-                <Text style={styles.backTitle}>{atividade.title}</Text>
-            </TouchableOpacity>
+
+            <BackButton title={atividade.title}/>
 
             <Image source={{ uri: atividade.image }} style={styles.image} />
 
             <View style={styles.container}>
                 <Text style={styles.title}>{atividade.title}</Text>
 
-                
+                <View style={styles.contAvaliacoes}>
+                    <IconStar name="star" size={20} color={Colors.stars} />
+                    <Text style={styles.qtdAvaliacoes}>{reviewsCount} Avaliações </Text>
+                </View>
+
+                <TouchableOpacity
+                    style={styles.btnAvalicoes}
+                    onPress={() => navigation.navigate('avaliacoes', { atividade, reviewsCount })}
+                >
+                    <Text style={styles.btnTxtAvaliacoes}>
+                        Ver todas as avaliações
+                    </Text>
+                </TouchableOpacity>
+
 
                 <Text style={styles.h2}>Descrição</Text>
 
@@ -68,17 +80,6 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#fff',
         marginBottom: 600,
-    },
-    backButton: {
-        backgroundColor: Colors.mainColor,
-        flexDirection: 'row',
-        padding: 15,
-        gap: 15,
-        paddingLeft: 20,
-    },
-    backTitle: {
-        color: 'white',
-        fontSize: 17,
     },
     image: {
         width: '100%',
@@ -127,6 +128,20 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
     },
+    contAvaliacoes: {
+        fontWeight: '500',
+        flexDirection: 'row',
+        gap: 10,
+        marginTop: 10,
+    },
+    qtdAvaliacoes: {
+        fontWeight: '500',
+    },
+    btnTxtAvaliacoes: {
+        color: Colors.detailsColor,
+        fontWeight: '500',
+        paddingLeft: 25,
+    }
 });
 
 

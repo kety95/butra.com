@@ -10,7 +10,9 @@ const AtividadeListada = ({ id, title, image, reviewsCount, description, accessi
   return (
     <TouchableOpacity 
       style={styles.card} 
-      onPress={() => navigation.navigate('detalhesatividade', { atividade: { id, title, image, reviewsCount, description, accessibilities, location, adress } })}
+      onPress={() => navigation.navigate('detalhesatividade', 
+        { atividade: { id, title, image, description, accessibilities, location, adress }, 
+        reviewsCount  })}
     >
       <Image source={{ uri: image }} style={styles.image} />
 

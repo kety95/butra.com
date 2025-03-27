@@ -5,6 +5,7 @@ import Pesquisa from './pesquisa'
 import ListaAtividades from './listaAtividades'
 import DetalhesAtividade from './detalhesAtividade'
 import React from 'react'
+import Avaliacoes from'./avaliacoes'
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const App = () => {
         <Stack.Screen name="cadastro" options={{ headerShown: false }} component={Cadastro} />
         <Stack.Screen name="listaatividades" options={{ headerShown: false }} component={ListaAtividades} />
         <Stack.Screen name="detalhesatividade" options={{ headerShown: false }} component={DetalhesAtividade} />
+        <Stack.Screen name="avaliacoes" options={{ headerShown: false }} component={Avaliacoes} />
       </Stack.Navigator>
   )
 }
