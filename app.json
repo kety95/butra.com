@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Butra.com",
-    "slug": "Butra.com",
+    "slug": "Butra-com",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -36,6 +36,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "583a2745-1390-4212-bd8d-01dc8fcdabc2"
+      }
     }
   }
 }

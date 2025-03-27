@@ -1,11 +1,10 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import IconCheck from 'react-native-vector-icons/Feather';
-import IconChair from 'react-native-vector-icons/FontAwesome';
 import IconLocation from 'react-native-vector-icons/EvilIcons';
 import { Colors } from '../../constants/Colors';
+import AcessibilidadeInfo from '../../components/acessibilidadeInfo';
 
 const DetalhesAtividade = ({ route }) => {
     const navigation = useNavigation();
@@ -25,8 +24,12 @@ const DetalhesAtividade = ({ route }) => {
             </TouchableOpacity>
 
             <Image source={{ uri: atividade.image }} style={styles.image} />
+
             <View style={styles.container}>
                 <Text style={styles.title}>{atividade.title}</Text>
+
+                
+
                 <Text style={styles.h2}>Descrição</Text>
 
                 <Text style={styles.description}>
@@ -37,13 +40,7 @@ const DetalhesAtividade = ({ route }) => {
                     <Text style={styles.toggleButtonText}>{isExpanded ? 'Ler menos' : 'Ler mais'}</Text>
                 </TouchableOpacity>
 
-                <View style={styles.acessibilidadeCont}>
-                    <IconChair name="wheelchair" color={Colors.detailsColor} size={18} />
-                    <Text style={styles.acessibilidade}>
-                        {atividade.accessibilities[0] || 'Sem acessibilidade'}
-                    </Text>
-                    <IconCheck name="check" color={Colors.detailsColor} size={18} />
-                </View>
+                <AcessibilidadeInfo accessibilities={atividade.accessibilities} />
 
                 <Text style={styles.h2}>Localização</Text>
                 <View style={styles.adress}>
@@ -54,7 +51,7 @@ const DetalhesAtividade = ({ route }) => {
 
                 <TouchableOpacity
                     style={styles.btn}
-                    onPress={() => {console.log("Botão pressionado!"); Alert.alert('Inscrição', 'Você se inscreveu com sucesso!')}}
+                    onPress={() => alert('Você se inscreveu com sucesso!')}
                 >
                     <Text style={styles.btn_txt}>Me inscrever</Text>
                 </TouchableOpacity>
@@ -62,6 +59,8 @@ const DetalhesAtividade = ({ route }) => {
         </>
     );
 };
+
+export default DetalhesAtividade;
 
 const styles = StyleSheet.create({
     container: {
@@ -107,20 +106,12 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         marginVertical: 10,
     },
-    acessibilidadeCont: {
-        flexDirection: 'row',
-        gap: 10,
-        paddingVertical: 20,
-    },
-    acessibilidade: {
-        color: Colors.detailsColor,
-    },
     adress: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingBottom: 5,
     },
-    btn:{
+    btn: {
         marginTop: 15,
         borderRadius: 4,
         backgroundColor: "#1E90FE",
@@ -130,7 +121,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         alignSelf: "flex-end"
     },
-    btn_txt:{
+    btn_txt: {
         color: "white",
         textAlign: "center",
         fontSize: 16,
@@ -138,4 +129,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default DetalhesAtividade;
+
