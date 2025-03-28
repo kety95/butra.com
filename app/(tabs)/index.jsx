@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Iniciar from './iniciar'
 import Cadastro from './cadastro'
+import CadastroParceiro from './cadastroParceiro'
 import Pesquisa from './pesquisa'
 import ListaAtividades from './listaAtividades'
 import DetalhesAtividade from './detalhesAtividade'
@@ -23,7 +24,6 @@ const App = () => {
       >
         <Stack.Screen name="iniciar" options={{ headerShown: false }} component={Iniciar} />
         <Stack.Screen name="pesquisa" options={{ headerShown: false }} component={Pesquisa} />
-        
         <Stack.Screen name="cadastro" options={{ headerShown: false }} component={Cadastro} />
         <Stack.Screen name="listaatividades" options={{ headerShown: false }} component={ListaAtividades} />
         <Stack.Screen name="detalhesatividade" options={{ headerShown: false }} component={DetalhesAtividade} />
@@ -31,6 +31,7 @@ const App = () => {
         <Stack.Screen name="minhasAtividades" options={{ headerShown: false }} component={MinhasAtividades} />
         <Stack.Screen name="notificacoes" options={{ headerShown: false }} component={Notificacoes} />
         <Stack.Screen name="login" options={{ headerShown: false }} component={Login} />
+        <Stack.Screen name="cadastroParceiro" options={{ headerShown: false }} component={CadastroParceiro} />
       </Stack.Navigator>
     </AtividadesProvider>
   )
