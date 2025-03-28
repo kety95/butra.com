@@ -6,12 +6,25 @@ import IconStar from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '../../constants/Colors';
 import AcessibilidadeInfo from '../../components/acessibilidadeInfo';
 import BackButton from '../../components/backButton';
+import { useAtividades } from '../context/AtividadesContext';
 
 const DetalhesAtividade = ({ route }) => {
     const navigation = useNavigation();
     const { atividade, reviewsCount } = route.params;
-
     const [isExpanded, setIsExpanded] = useState(false);
+
+    const { minhasAtividades, inscreverAtividade } = useAtividades();
+
+    // Verifica se o usuário já está inscrito
+    const jaInscrito = minhasAtividades.some((a) => a.id === atividade.id);
+
+    const handleInscricao = () => {
+        if (!jaInscrito) {
+            inscreverAtividade(atividade);
+            alert('Você se inscreveu com sucesso!');
+            navigation.navigate('MinhasAtividades');
+        }
+    };
 
     const toggleDescription = () => {
         setIsExpanded(!isExpanded);
@@ -19,8 +32,7 @@ const DetalhesAtividade = ({ route }) => {
 
     return (
         <>
-
-            <BackButton title={atividade.title}/>
+            <BackButton title={atividade.title} />
 
             <Image source={{ uri: atividade.image }} style={styles.image} />
 
@@ -40,7 +52,6 @@ const DetalhesAtividade = ({ route }) => {
                         Ver todas as avaliações
                     </Text>
                 </TouchableOpacity>
-
 
                 <Text style={styles.h2}>Descrição</Text>
 
@@ -62,10 +73,13 @@ const DetalhesAtividade = ({ route }) => {
                 <Text>{atividade.adress}</Text>
 
                 <TouchableOpacity
-                    style={styles.btn}
-                    onPress={() => alert('Você se inscreveu com sucesso!')}
+                    style={[styles.btn, jaInscrito && styles.btnDisabled]}
+                    onPress={handleInscricao}
+                    disabled={jaInscrito}
                 >
-                    <Text style={styles.btn_txt}>Me inscrever</Text>
+                    <Text style={styles.btn_txt}>
+                        {jaInscrito ? 'Já inscrito' : 'Me inscrever'}
+                    </Text>
                 </TouchableOpacity>
             </View>
         </>
@@ -118,7 +132,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#1E90FE",
         paddingVertical: 10,
         paddingHorizontal: 25,
-        alignItems: "right",
+        alignItems: "center",
         marginBottom: 8,
         alignSelf: "flex-end"
     },
@@ -127,6 +141,9 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 16,
         fontWeight: '500',
+    },
+    btnDisabled: {
+        backgroundColor: "#ccc",
     },
     contAvaliacoes: {
         fontWeight: '500',
@@ -143,5 +160,3 @@ const styles = StyleSheet.create({
         paddingLeft: 25,
     }
 });
-
-

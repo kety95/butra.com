@@ -5,14 +5,16 @@ import Pesquisa from './pesquisa'
 import ListaAtividades from './listaAtividades'
 import DetalhesAtividade from './detalhesAtividade'
 import React from 'react'
-import Avaliacoes from'./avaliacoes'
+import Avaliacoes from './avaliacoes'
 import MinhasAtividades from './minhasAtividades'
 import Notificacoes from './notificacoes'
+import { AtividadesProvider } from '../context/AtividadesContext';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
+    <AtividadesProvider>
       <Stack.Navigator
         screenOptions={{
           contentStyle: { backgroundColor: '#FFFFFF' }
@@ -27,6 +29,7 @@ const App = () => {
         <Stack.Screen name="minhasAtividades" options={{ headerShown: false }} component={MinhasAtividades} />
         <Stack.Screen name="notificacoes" options={{ headerShown: false }} component={Notificacoes} />
       </Stack.Navigator>
+    </AtividadesProvider>
   )
 }
 
