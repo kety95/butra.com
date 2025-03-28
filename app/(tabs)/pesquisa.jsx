@@ -1,6 +1,6 @@
 import { View, TextInput, StyleSheet, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from '../../constants/Colors';
-import Banner from '../../components/banner/banner';
+import Banner from '../../components/banner';
 import React, { useState } from 'react';
 import IconSearch from 'react-native-vector-icons/AntDesign';
 import IconCalendar from 'react-native-vector-icons/Feather';
