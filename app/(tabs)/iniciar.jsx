@@ -9,7 +9,7 @@ const Iniciar = ({ navigation }) => {
       <Banner/>
       <View style={styles.botoesContainer}>
         <Btn_iniciar titulo="Começar" onPress={() => navigation.navigate('cadastro')}/>
-        <Btn_iniciar titulo="Login" onPress={() => alert('Botão clicado!')}/>
+        <Btn_iniciar titulo="Login" onPress={() => navigation.navigate('login')}/>
         <Btn_iniciar titulo="Criar conta de parceiro" onPress={() => alert('Botão clicado!')}/>
       </View>
     </View>
