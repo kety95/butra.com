@@ -15,14 +15,14 @@ const Avaliacoes = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`http://localhost:3000/reviews?activity=${atividade.id}`)
+        fetch(`http://192.168.15.158:3000/reviews?activity=${atividade.id}`)
             .then(res => res.json())
             .then(data => {
                 setReviews(data)
             })
             .catch(error => console.error('Erro ao buscar avaliações:', error));
 
-        fetch('http://localhost:3000/users')
+        fetch('http://192.168.15.158:3000/users')
             .then(res => res.json())
             .then(data => {
                 setUsers(data);

@@ -26,7 +26,7 @@ const MinhasAtividades = () => {
                             keyExtractor={(item) => item.id.toString()}
                             renderItem={({ item }) => (
                                 <View style={styles.atividadeContainer}>
-                                    <CardAtividadeInscrita {...item} />
+                                    <CardAtividadeInscrita {...item} selectedDate={item.selectedDate} />
                                 </View>
                             )}
                         />

@@ -1,18 +1,18 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import IconCheck from 'react-native-vector-icons/Feather';
-import IconCalendar from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/Feather';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useAtividades } from '../app/context/AtividadesContext';
+import { formatDateToDisplay } from '../app/utils/dateUtils';
 
-const CardAtividadeInscrita = ({ id, title, dates, image, reviewsCount, description, accessibilities, location, adress }) => {
+const CardAtividadeInscrita = ({ id, title, dates, image, reviewsCount, description, accessibilities, location, adress, selectedDate }) => {
   const navigation = useNavigation();
   const { cancelarInscricao } = useAtividades();
 
   const handleCancelar = () => {
     Alert.alert(
       "Cancelar inscrição",
-      "Tem certeza de que deseja cancelar sua inscrição nesta atividade?",
+      "Deseja cancelar sua inscrição nesta atividade?",
       [
         { text: "Não", style: "cancel" },
         { text: "Sim", onPress: () => cancelarInscricao(id) }
@@ -36,13 +36,13 @@ const CardAtividadeInscrita = ({ id, title, dates, image, reviewsCount, descript
 
         <View style={styles.container}>
           <View style={styles.data}>
-            <IconCalendar name="calendar" size={16} color={"#6D6D6D"} />
-            <Text>{dates?.length ? dates[0] : 'Data'}</Text>
+            <Icon name="calendar" size={16} color={"#6D6D6D"} />
+            <Text>{formatDateToDisplay(selectedDate)}</Text>
           </View>
           
           <View style={styles.btn}>
             <Text style={styles.btn_txt}>Inscrito</Text>
-            <IconCheck name="check" color={'white'} size={18} />
+            <Icon name="check" color={'white'} size={18} />
           </View>
         </View>
         <TouchableOpacity onPress={handleCancelar}>

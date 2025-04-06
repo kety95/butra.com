@@ -6,15 +6,18 @@ export const AtividadesProvider = ({ children }) => {
     const [minhasAtividades, setMinhasAtividades] = useState([]);
 
     const inscreverAtividade = (atividade) => {
-        const jaInscrito = minhasAtividades.some((a) => a.id === atividade.id);
-        
+        const jaInscrito = minhasAtividades.some(
+            (a) => a.id === atividade.id && a.selectedDate === atividade.selectedDate
+        );
+    
         if (jaInscrito) {
-            alert("Você já está inscrito nesta atividade!");
+            alert("Você já está inscrito nesta atividade para esta data!");
             return;
         }
-
+    
         setMinhasAtividades((prev) => [...prev, atividade]);
     };
+    
 
     const cancelarInscricao = (id) => {
         setMinhasAtividades((prev) => prev.filter((atividade) => atividade.id !== id));

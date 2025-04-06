@@ -2,6 +2,7 @@ import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity }
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AtividadeListada from '../../components/atividadeListada';
+import { formatDateToDisplay } from '../utils/dateUtils';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { Colors } from '../../constants/Colors';
 
@@ -16,8 +17,8 @@ const ListaAtividades = ({ route }) => {
     setLoading(true);
 
     Promise.all([
-      fetch('http://localhost:3000/activities').then(res => res.json()),
-      fetch('http://localhost:3000/reviews').then(res => res.json()),
+      fetch('http://192.168.15.158:3000/activities').then(res => res.json()),
+      fetch('http://192.168.15.158:3000/reviews').then(res => res.json()),
     ])
       .then(([atividadesData, reviewsData]) => {
         const reviewsCount = reviewsData.reduce((acc, review) => {
@@ -27,7 +28,7 @@ const ListaAtividades = ({ route }) => {
 
         const atividadesFiltradas = atividadesData.filter(atividade => {
           const cidadeCorresponde = !location || atividade.location.includes(location);
-          const dataCorresponde = date ? atividade.dates[0] === date : true;
+          const dataCorresponde = date ? atividade.dates.some(d => d === date) : true;
           return cidadeCorresponde && dataCorresponde;
         });
 
@@ -54,7 +55,7 @@ const ListaAtividades = ({ route }) => {
               <Icon name="arrowleft" size={24} />
             </TouchableOpacity>
             <Text style={styles.txt}>
-              {location || 'Todos os lugares'} - {date || 'Qualquer data'}
+              {location || 'Todos os lugares'} - {formatDateToDisplay(date) || 'Qualquer data'}
             </Text>
           </View>
         </View>

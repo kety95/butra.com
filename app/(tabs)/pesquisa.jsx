@@ -7,6 +7,7 @@ import IconCalendar from 'react-native-vector-icons/Feather';
 import DatePicker from 'react-native-modern-datepicker';
 import { getFormatedDate } from 'react-native-modern-datepicker';
 import Autocomplete from 'react-native-autocomplete-input';
+import { formatDateToDisplay } from '../utils/dateUtils';
 
 const capitais = [
     "Buenos Aires", "São Paulo", "Brasília", "Paris", "Londres", "Roma", "Madrid", 
@@ -27,15 +28,16 @@ const Pesquisa = ({ navigation }) => {
 
     function handleChange(propDate) {
         if (propDate !== date) {
-            setDate(propDate);
-            setOpen(false);
+            const [year, month, day] = propDate.split('/');
+            const formatted = `${year}-${month}-${day}`;
+            setDate(formatted);
         }
     }
 
     function handleClearDate() {
         setDate('');
         setOpen(false);
-    }
+    }      
 
     const [query, setQuery] = useState('');
     const [filteredCapitais, setFilteredCapitais] = useState([]);
@@ -90,7 +92,7 @@ const Pesquisa = ({ navigation }) => {
                     <TextInput
                         style={styles.input}
                         placeholder="Qualquer data"
-                        value={date || 'Qualquer data'}
+                        value={date ? formatDateToDisplay(date) : 'Qualquer data'}
                         editable={false}
                     />
                 </TouchableOpacity>

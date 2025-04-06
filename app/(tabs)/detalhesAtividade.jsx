@@ -7,23 +7,35 @@ import { Colors } from '../../constants/Colors';
 import AcessibilidadeInfo from '../../components/acessibilidadeInfo';
 import BackButton from '../../components/backButton';
 import { useAtividades } from '../context/AtividadesContext';
+import DateCard from '../../components/dateCard'
 
 const DetalhesAtividade = ({ route }) => {
     const navigation = useNavigation();
     const { atividade, reviewsCount } = route.params;
+
     const [isExpanded, setIsExpanded] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
 
     const { minhasAtividades, inscreverAtividade } = useAtividades();
 
-    // Verifica se o usuário já está inscrito
-    const jaInscrito = minhasAtividades.some((a) => a.id === atividade.id);
+    const jaInscrito = selectedDate && minhasAtividades.some(
+        (a) => a.id === atividade.id && a.selectedDate === selectedDate
+      );      
 
     const handleInscricao = () => {
-        if (!jaInscrito) {
-            inscreverAtividade(atividade);
-            alert('Você se inscreveu com sucesso!');
-            navigation.navigate('MinhasAtividades');
+        if (!selectedDate) {
+            alert("Selecione uma data.");
+            return;
         }
+
+        if (jaInscrito) {
+            alert("Você já está inscrito nessa atividade para esta data.");
+            return;
+        }
+
+        inscreverAtividade({ ...atividade, selectedDate });
+        alert('Você se inscreveu com sucesso!');
+        navigation.navigate('minhasAtividades');
     };
 
     const toggleDescription = () => {
@@ -71,6 +83,9 @@ const DetalhesAtividade = ({ route }) => {
                     <IconLocation name="location" color={Colors.detailsColor} size={20} />
                 </View>
                 <Text>{atividade.adress}</Text>
+
+                <Text style={styles.h2}>Data</Text>
+                <DateCard dates={atividade.dates} onSelectDate={setSelectedDate} />
 
                 <TouchableOpacity
                     style={[styles.btn, jaInscrito && styles.btnDisabled]}
