@@ -35,11 +35,8 @@ const CadastroParceiro = ({ navigation }) => {
             return errors;
           }}
           onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              navigation.navigate('pesquisa')
-              setSubmitting(false);
-            }, 400);
+            setSubmitting(false);
+            navigation.navigate('criarAtividade')
           }}
         >
           {({ handleChange, handleBlur, handleSubmit, values, errors, isSubmitting }) => (

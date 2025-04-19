@@ -24,10 +24,12 @@ const DateCard = ({ dates, onSelectDate }) => {
         }
     };
 
+    const sortedDates = [...dates].sort((a, b) => new Date(a) - new Date(b));
+
     return (
         <View style={styles.datesCont}>
-            {dates.length > 0 ? (
-                dates.map((item, index) => {
+            {sortedDates.length > 0 ? (
+                sortedDates.map((item, index) => {
                     const { dayName, dayNumber, monthName } = formatDate(item);
                     const isSelected = selectedDate === item;
 
@@ -59,6 +61,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 10,
         padding: 10,
+        flexWrap: 'wrap',
     },
     dateItem: {
         alignItems: 'center',

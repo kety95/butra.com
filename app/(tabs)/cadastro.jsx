@@ -2,6 +2,10 @@ import React from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { Formik } from 'formik';
 import BackButton from '../../components/backButton';
+import { auth } from '../../factory/firebase';
+import banco from '../../factory/firebase';
+import { setDoc, doc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Cadastro = ({ navigation }) => {
   const REQUIRED_FIELD = "Campo obrigatório";
@@ -34,20 +38,33 @@ const Cadastro = ({ navigation }) => {
             }
             return errors;
           }}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              navigation.navigate('pesquisa')
+          onSubmit={async (values, { setSubmitting }) => {
+            try {
+              const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+              const user = userCredential.user;
+
+              await setDoc(doc(banco, 'users', user.uid), {
+                name: values.name,
+                email: values.email,
+                phone: values.phone,
+                userType: 'participant',
+              });
+
+              navigation.navigate('pesquisa');
+            } catch (error) {
+              console.error('Erro ao cadastrar:', error);
+              alert('Erro ao cadastrar');
+            } finally {
               setSubmitting(false);
-            }, 400);
+            }
           }}
         >
           {({ handleChange, handleBlur, handleSubmit, values, errors, isSubmitting }) => (
             <View style={styles.formContainer}>
-              <Text>Nome</Text>
+              <Text>Nome completo</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Nome"
+                placeholder="Nome e sobrenome"
                 onChangeText={handleChange('name')}
                 onBlur={handleBlur('name')}
                 value={values.name}

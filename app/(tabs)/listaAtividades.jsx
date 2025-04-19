@@ -1,10 +1,11 @@
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import AtividadeListada from '../../components/atividadeListada';
+import CardAtividadeListada from '../../components/CardatividadeListada';
 import { formatDateToDisplay } from '../utils/dateUtils';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { Colors } from '../../constants/Colors';
+import { getAtividadesComReviews } from '../../services/firestore';
 
 const ListaAtividades = ({ route }) => {
   const navigation = useNavigation();
@@ -16,35 +17,23 @@ const ListaAtividades = ({ route }) => {
   useEffect(() => {
     setLoading(true);
 
-    Promise.all([
-      fetch('http://192.168.15.158:3000/activities').then(res => res.json()),
-      fetch('http://192.168.15.158:3000/reviews').then(res => res.json()),
-    ])
-      .then(([atividadesData, reviewsData]) => {
-        const reviewsCount = reviewsData.reduce((acc, review) => {
-          acc[review.activity] = (acc[review.activity] || 0) + 1;
-          return acc;
-        }, {});
-
-        const atividadesFiltradas = atividadesData.filter(atividade => {
+    getAtividadesComReviews()
+      .then(atividades => {
+        const atividadesFiltradas = atividades.filter(atividade => {
           const cidadeCorresponde = !location || atividade.location.includes(location);
-          const dataCorresponde = date ? atividade.dates.some(d => d === date) : true;
+          const dataCorresponde = date ? atividade.dates?.includes(date) : true;
           return cidadeCorresponde && dataCorresponde;
         });
 
-        const atividadesComReviews = atividadesFiltradas.map(atividade => ({
-          ...atividade,
-          reviewsCount: reviewsCount[atividade.id] || 0,
-        }));
-
-        setAtividades(atividadesComReviews);
+        setAtividades(atividadesFiltradas);
       })
       .catch(error => {
         console.error('Erro ao buscar dados:', error);
         alert('Houve um erro ao buscar as atividades. Tente novamente mais tarde.');
-      })      
+      })
       .finally(() => setLoading(false));
   }, [date, location]);
+
 
   return (
     <View>
@@ -62,21 +51,21 @@ const ListaAtividades = ({ route }) => {
       </View>
 
       <View style={styles.separator} />
-
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : atividades.length === 0 ? (
-        <View style={styles.noDataContainer}>
-          <Text style={styles.noDataText}>Nenhuma atividade encontrada para os filtros aplicados.</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={atividades}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <AtividadeListada {...item} />}
-        />
-      )}
-
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : atividades.length === 0 ? (
+          <View style={styles.noDataContainer}>
+            <Text style={styles.noDataText}>Nenhuma atividade encontrada para os filtros aplicados.</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={atividades}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => <CardAtividadeListada {...item} />}
+          />
+        )}
+      </ScrollView>
     </View>
   );
 };

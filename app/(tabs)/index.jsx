@@ -8,6 +8,7 @@ import DetalhesAtividade from './detalhesAtividade'
 import React from 'react'
 import Avaliacoes from './avaliacoes'
 import MinhasAtividades from './minhasAtividades'
+import CriarAtividade from './criarAtividade'
 import Notificacoes from './notificacoes'
 import Login from './login'
 import { AtividadesProvider } from '../context/AtividadesContext';
@@ -32,6 +33,7 @@ const App = () => {
         <Stack.Screen name="notificacoes" options={{ headerShown: false }} component={Notificacoes} />
         <Stack.Screen name="login" options={{ headerShown: false }} component={Login} />
         <Stack.Screen name="cadastroParceiro" options={{ headerShown: false }} component={CadastroParceiro} />
+        <Stack.Screen name="criarAtividade" options={{ headerShown: false }} component={CriarAtividade} />
       </Stack.Navigator>
     </AtividadesProvider>
   )

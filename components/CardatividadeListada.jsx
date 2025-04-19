@@ -4,7 +4,7 @@ import { Colors } from '../constants/Colors';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 
-const AtividadeListada = ({ id, title, image, reviewsCount, description, accessibilities, location, adress, dates }) => {
+const CardAtividadeListada = ({ id, title, image, reviewsCount, description, accessibilities, location, adress, dates }) => {
   const navigation = useNavigation();
 
   return (
@@ -67,4 +67,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AtividadeListada;
+export default CardAtividadeListada;

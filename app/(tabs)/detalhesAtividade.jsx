@@ -1,5 +1,5 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import IconLocation from 'react-native-vector-icons/EvilIcons';
 import IconStar from 'react-native-vector-icons/FontAwesome';
@@ -7,36 +7,57 @@ import { Colors } from '../../constants/Colors';
 import AcessibilidadeInfo from '../../components/acessibilidadeInfo';
 import BackButton from '../../components/backButton';
 import { useAtividades } from '../context/AtividadesContext';
-import DateCard from '../../components/dateCard'
+import DateCard from '../../components/dateCard';
+import { getReviewsCountByActivity } from '../../services/firestore'
 
 const DetalhesAtividade = ({ route }) => {
     const navigation = useNavigation();
-    const { atividade, reviewsCount } = route.params;
+    const { atividade } = route.params;
+    const [reviewsCount, setReviewsCount] = useState(0);
 
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
 
     const { minhasAtividades, inscreverAtividade } = useAtividades();
 
+    useEffect(() => {
+        const fetchReviewsCount = async () => {
+          try {
+            const count = await getReviewsCountByActivity(atividade.id);
+            setReviewsCount(count);
+          } catch (error) {
+            console.error('Erro ao buscar avaliações:', error);
+          }
+        };
+      
+        fetchReviewsCount();
+      }, [atividade.id]);
+
     const jaInscrito = selectedDate && minhasAtividades.some(
         (a) => a.id === atividade.id && a.selectedDate === selectedDate
       );      
 
-    const handleInscricao = () => {
+      const handleInscricao = async () => {
         if (!selectedDate) {
             alert("Selecione uma data.");
             return;
         }
-
+    
         if (jaInscrito) {
             alert("Você já está inscrito nessa atividade para esta data.");
             return;
         }
-
-        inscreverAtividade({ ...atividade, selectedDate });
-        alert('Você se inscreveu com sucesso!');
-        navigation.navigate('minhasAtividades');
+    
+        try {
+            await inscreverAtividade(atividade, selectedDate);
+            alert('Você se inscreveu com sucesso!');
+            navigation.navigate('minhasAtividades');
+        } catch (error) {
+            console.error("Erro ao se inscrever:", error);
+            alert("Erro ao se inscrever. Tente novamente.");
+        }
     };
+    
 
     const toggleDescription = () => {
         setIsExpanded(!isExpanded);
@@ -46,57 +67,59 @@ const DetalhesAtividade = ({ route }) => {
         <>
             <BackButton title={atividade.title} />
 
-            <Image source={{ uri: atividade.image }} style={styles.image} />
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <Image source={{ uri: atividade.image }} style={styles.image} />
 
-            <View style={styles.container}>
-                <Text style={styles.title}>{atividade.title}</Text>
+                <View style={styles.container}>
+                    <Text style={styles.title}>{atividade.title}</Text>
 
-                <View style={styles.contAvaliacoes}>
-                    <IconStar name="star" size={20} color={Colors.stars} />
-                    <Text style={styles.qtdAvaliacoes}>{reviewsCount} Avaliações </Text>
-                </View>
+                    <View style={styles.contAvaliacoes}>
+                        <IconStar name="star" size={20} color={Colors.stars} />
+                        <Text style={styles.qtdAvaliacoes}>{reviewsCount} Avaliações </Text>
+                    </View>
 
-                <TouchableOpacity
-                    style={styles.btnAvalicoes}
-                    onPress={() => navigation.navigate('avaliacoes', { atividade, reviewsCount })}
-                >
-                    <Text style={styles.btnTxtAvaliacoes}>
-                        Ver todas as avaliações
+                    <TouchableOpacity
+                        style={styles.btnAvalicoes}
+                        onPress={() => navigation.navigate('avaliacoes', { atividade, reviewsCount })}
+                    >
+                        <Text style={styles.btnTxtAvaliacoes}>
+                            Ver todas as avaliações
+                        </Text>
+                    </TouchableOpacity>
+
+                    <Text style={styles.h2}>Descrição</Text>
+
+                    <Text style={styles.description}>
+                        {isExpanded ? atividade.description : `${atividade.description?.substring(0, 190)}...`}
                     </Text>
-                </TouchableOpacity>
 
-                <Text style={styles.h2}>Descrição</Text>
+                    <TouchableOpacity onPress={toggleDescription} style={styles.toggleButton}>
+                        <Text style={styles.toggleButtonText}>{isExpanded ? 'Ler menos' : 'Ler mais'}</Text>
+                    </TouchableOpacity>
 
-                <Text style={styles.description}>
-                    {isExpanded ? atividade.description : `${atividade.description?.substring(0, 190)}...`}
-                </Text>
+                    <AcessibilidadeInfo accessibilities={atividade.accessibilities} />
 
-                <TouchableOpacity onPress={toggleDescription} style={styles.toggleButton}>
-                    <Text style={styles.toggleButtonText}>{isExpanded ? 'Ler menos' : 'Ler mais'}</Text>
-                </TouchableOpacity>
+                    <Text style={styles.h2}>Localização</Text>
+                    <View style={styles.adress}>
+                        <Text style={styles.toggleButtonText}>Endereço</Text>
+                        <IconLocation name="location" color={Colors.detailsColor} size={20} />
+                    </View>
+                    <Text>{atividade.adress}</Text>
 
-                <AcessibilidadeInfo accessibilities={atividade.accessibilities} />
+                    <Text style={styles.h2}>Data</Text>
+                    <DateCard dates={atividade.dates} onSelectDate={setSelectedDate} />
 
-                <Text style={styles.h2}>Localização</Text>
-                <View style={styles.adress}>
-                    <Text style={styles.toggleButtonText}>Endereço</Text>
-                    <IconLocation name="location" color={Colors.detailsColor} size={20} />
+                    <TouchableOpacity
+                        style={[styles.btn, jaInscrito && styles.btnDisabled]}
+                        onPress={handleInscricao}
+                        disabled={jaInscrito}
+                    >
+                        <Text style={styles.btn_txt}>
+                            {jaInscrito ? 'Já inscrito' : 'Me inscrever'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-                <Text>{atividade.adress}</Text>
-
-                <Text style={styles.h2}>Data</Text>
-                <DateCard dates={atividade.dates} onSelectDate={setSelectedDate} />
-
-                <TouchableOpacity
-                    style={[styles.btn, jaInscrito && styles.btnDisabled]}
-                    onPress={handleInscricao}
-                    disabled={jaInscrito}
-                >
-                    <Text style={styles.btn_txt}>
-                        {jaInscrito ? 'Já inscrito' : 'Me inscrever'}
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            </ScrollView>
         </>
     );
 };
@@ -108,7 +131,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         backgroundColor: '#fff',
-        marginBottom: 600,
     },
     image: {
         width: '100%',
@@ -173,5 +195,5 @@ const styles = StyleSheet.create({
         color: Colors.detailsColor,
         fontWeight: '500',
         paddingLeft: 25,
-    }
+    },
 });

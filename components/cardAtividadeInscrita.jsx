@@ -15,7 +15,12 @@ const CardAtividadeInscrita = ({ id, title, dates, image, reviewsCount, descript
       "Deseja cancelar sua inscrição nesta atividade?",
       [
         { text: "Não", style: "cancel" },
-        { text: "Sim", onPress: () => cancelarInscricao(id) }
+        { 
+          text: "Sim", 
+          onPress: () =>{ console.log("Data selecionada ", selectedDate); 
+            cancelarInscricao(id, selectedDate); 
+            Alert.alert('Inscrição cancelada!','Você não está mais inscrito nesta atividade')}
+        }
       ]
     );
   };
@@ -55,7 +60,9 @@ const CardAtividadeInscrita = ({ id, title, dates, image, reviewsCount, descript
 
 const styles = StyleSheet.create({
   card: {
-    padding: 10,
+    padding: 5,
+    paddingLeft: 15,
+    paddingBottom: 0,
     flexDirection: 'row',
     paddingRight: 20,
     gap: 12,

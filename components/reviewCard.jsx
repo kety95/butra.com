@@ -3,13 +3,13 @@ import { View, Text, StyleSheet } from 'react-native';
 import IconStar from 'react-native-vector-icons/FontAwesome';
 import UserAvatar from './userAvatar';
 
-const ReviewCard = ({ review, user = { firstName: "Usuário", lastName: "Desconhecido" } }) => {
+const ReviewCard = ({ review, user = { name: "Usuário Desconhecido" } }) => {
     return (
         <View style={styles.card}>
             <View style={styles.header}>
-                <UserAvatar name={user.firstName} />
+                <UserAvatar name={user.name} />
                 <Text style={styles.userName}>
-                    {user.firstName} {user.lastName}
+                    {user.name || 'Usuário Desconhecido'}
                 </Text>
             </View>
 
@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#CBCBCB',
-        borderRadius: 10,
         borderStyle: 'solid',
     },
     header: {
@@ -60,4 +59,3 @@ const styles = StyleSheet.create({
         color: '#555',
     },
 });
-
