@@ -4,11 +4,19 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 
-const BackButton = ({ title }) => {
+const BackButton = ({ title, customGoBack }) => {
     const navigation = useNavigation();
 
+    const handleGoBack = () => {
+        if (customGoBack) {
+            customGoBack();
+        } else {
+            navigation.goBack();
+        }
+    };
+
     return (
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
             <Icon name="arrowleft" color="white" size={24} />
             <Text style={styles.backTitle}>{title}</Text>
         </TouchableOpacity>

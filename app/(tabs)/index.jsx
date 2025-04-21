@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Iniciar from './iniciar'
 import Cadastro from './cadastro'
-import CadastroParceiro from './cadastroParceiro'
 import Pesquisa from './pesquisa'
 import ListaAtividades from './listaAtividades'
 import DetalhesAtividade from './detalhesAtividade'
@@ -11,6 +10,7 @@ import MinhasAtividades from './minhasAtividades'
 import CriarAtividade from './criarAtividade'
 import Notificacoes from './notificacoes'
 import Login from './login'
+import UserData from './userData'
 import { AtividadesProvider } from '../context/AtividadesContext';
 
 const Stack = createNativeStackNavigator();
@@ -32,8 +32,8 @@ const App = () => {
         <Stack.Screen name="minhasAtividades" options={{ headerShown: false }} component={MinhasAtividades} />
         <Stack.Screen name="notificacoes" options={{ headerShown: false }} component={Notificacoes} />
         <Stack.Screen name="login" options={{ headerShown: false }} component={Login} />
-        <Stack.Screen name="cadastroParceiro" options={{ headerShown: false }} component={CadastroParceiro} />
         <Stack.Screen name="criarAtividade" options={{ headerShown: false }} component={CriarAtividade} />
+        <Stack.Screen name="userData" options={{ headerShown: false }} component={UserData} />
       </Stack.Navigator>
     </AtividadesProvider>
   )

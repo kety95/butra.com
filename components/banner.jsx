@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text } from 'react-native';
 import Menu_sup from './menu_sup'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import UserIcon from 'react-native-vector-icons/FontAwesome5'
 import { Colors } from '../constants/Colors';
 
 const Banner = ({tela, navigation}) => {
@@ -8,6 +9,9 @@ const Banner = ({tela, navigation}) => {
         return (
             <View style={styles.container}>
                 <View style={styles.banner_pesq}>
+                    <UserIcon name="user-circle" size={24} style={styles.color}
+                        onPress={() => navigation.navigate('userData')}
+                    />
                     <Text type="title" style={styles.txt_pesq}>Butra.com</Text>
                     <Icon name="bell-outline" size={24} style={styles.color}
                         onPress={() => navigation.navigate('notificacoes')}

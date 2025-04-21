@@ -145,3 +145,19 @@ export const getInscricoesDoUsuario = async () => {
 
   return inscricoes;
 };
+
+
+export const getDadosUsuario = async () => {
+  const userId = auth.currentUser?.uid;
+  if (!userId) return null;
+
+  const userRef = doc(banco, 'users', userId);
+  const userSnap = await getDoc(userRef);
+
+  if (userSnap.exists()) {
+    return { id: userSnap.id, ...userSnap.data() };
+  } else {
+    console.log('Usuário não encontrado no Firestore');
+    return null;
+  }
+};

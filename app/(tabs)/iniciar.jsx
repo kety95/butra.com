@@ -24,9 +24,9 @@ const Iniciar = ({ navigation }) => {
     <View style={styles.container}>
       <Banner navigation={navigation} />
       <View style={styles.botoesContainer}>
-        <Btn_iniciar titulo="Começar" onPress={() => navigation.navigate('cadastro')} />
+        <Btn_iniciar titulo="Começar" onPress={() => navigation.navigate('cadastro', {userType: 'participant'})} />
         <Btn_iniciar titulo="Login" onPress={() => navigation.navigate('login')} />
-        <Btn_iniciar titulo="Criar conta de parceiro" onPress={() => navigation.navigate('cadastroParceiro')} />
+        <Btn_iniciar titulo="Criar conta de parceiro" onPress={() => navigation.navigate('cadastro', {userType: 'organizer'})} />
       </View>
     </View>
   );

@@ -6,14 +6,17 @@ import { auth } from '../../factory/firebase';
 import banco from '../../factory/firebase';
 import { setDoc, doc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { TextInputMask } from 'react-native-masked-text';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Cadastro = ({ navigation }) => {
+const Cadastro = ({ navigation, route }) => {
   const REQUIRED_FIELD = "Campo obrigatório";
+  const { userType } = route.params;
   return (
     <>
-      <BackButton title={""} />
+      <BackButton title={""} customGoBack={() => navigation.navigate('iniciar')} />
       <View style={styles.container}>
-        <Text style={styles.header}>Cadastro</Text>
+        <Text style={styles.header}>{userType === 'participant' ? 'Cadastro' : 'Criar conta de parceiro'}</Text>
         <Formik
           initialValues={{ name: '', email: '', password: '', phone: '' }}
           validate={values => {
@@ -28,8 +31,11 @@ const Cadastro = ({ navigation }) => {
             }
             if (!values.phone) {
               errors.phone = REQUIRED_FIELD;
-            } else if (!/^\d{8,15}$/.test(values.phone)) {
-              errors.phone = "Número inválido (8-15 dígitos)";
+            } else {
+              const numericPhone = values.phone.replace(/\D/g, '');
+              if (numericPhone.length < 8 || numericPhone.length > 15) {
+                errors.phone = "Número inválido (8-15 dígitos)";
+              }
             }
             if (!values.password) {
               errors.password = REQUIRED_FIELD;
@@ -47,10 +53,13 @@ const Cadastro = ({ navigation }) => {
                 name: values.name,
                 email: values.email,
                 phone: values.phone,
-                userType: 'participant',
+                userType: userType,
               });
-
-              navigation.navigate('pesquisa');
+              if (userType === 'organizer') {
+                navigation.navigate('criarAtividade');
+              } else {
+                navigation.navigate('pesquisa');
+              }              
             } catch (error) {
               console.error('Erro ao cadastrar:', error);
               alert('Erro ao cadastrar');
@@ -62,45 +71,70 @@ const Cadastro = ({ navigation }) => {
           {({ handleChange, handleBlur, handleSubmit, values, errors, isSubmitting }) => (
             <View style={styles.formContainer}>
               <Text>Nome completo</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Nome e sobrenome"
-                onChangeText={handleChange('name')}
-                onBlur={handleBlur('name')}
-                value={values.name}
-              />
+              <View style={styles.inputWrapper}>
+                <Icon name="person" size={20} color="#555" style={styles.icon} />
+                <TextInput
+                  style={styles.inputWithIcon}
+                  placeholder="Nome e sobrenome"
+                  onChangeText={handleChange('name')}
+                  onBlur={handleBlur('name')}
+                  value={values.name}
+                  underlineColorAndroid="transparent"
+                />
+              </View>
               {errors.name && <Text style={styles.error}>{errors.name}</Text>}
 
+
               <Text>Email</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                keyboardType="email-address"
-              />
+              <View style={styles.inputWrapper}>
+                <Icon name="email" size={20} color="#555" style={styles.icon} />
+                <TextInput
+                  style={styles.inputWithIcon}
+                  placeholder="Email"
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                />
+              </View>
               {errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
+
               <Text>Telefone</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Telefone"
-                onChangeText={handleChange('phone')}
-                onBlur={handleBlur('phone')}
-                value={values.phone}
-              />
+              <View style={styles.inputWrapper}>
+                <Icon name="phone" size={20} color="#555" style={styles.icon} />
+                <TextInputMask
+                  type={'cel-phone'}
+                  options={{
+                    maskType: 'BRL',
+                    withDDD: true,
+                    dddMask: '(99) '
+                  }}
+                  style={styles.inputWithIcon}
+                  placeholder="(11) 91234-5678"
+                  value={values.phone}
+                  onChangeText={handleChange('phone')}
+                  onBlur={handleBlur('phone')}
+                  keyboardType="phone-pad"
+                />
+              </View>
               {errors.phone && <Text style={styles.error}>{errors.phone}</Text>}
 
               <Text>Senha</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Senha"
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-                secureTextEntry
-              />
+              <View style={styles.inputWrapper}>
+                <Icon name="lock" size={20} color="#555" style={styles.icon} />
+                <TextInput
+                  style={styles.inputWithIcon}
+                  placeholder="Senha"
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
+                  secureTextEntry
+                  underlineColorAndroid="transparent"
+                />
+              </View>
               {errors.password && <Text style={styles.error}>{errors.password}</Text>}
 
               <View style={styles.buttonContainer}>
@@ -134,7 +168,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginVertical: 20,
-    paddingHorizontal: 20,
   },
   error: {
     color: 'red',
@@ -143,6 +176,23 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     justifyContent: "flex-end",
-    paddingBottom: 20,
+    paddingBottom: 10,
   },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
+  icon: {
+    marginRight: 8,
+  },
+  inputWithIcon: {
+    flex: 1,
+    paddingVertical: 10,
+  },
+
 });

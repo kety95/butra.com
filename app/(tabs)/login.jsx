@@ -1,16 +1,29 @@
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, BackHandler } from 'react-native';
 import { Formik } from 'formik';
+import { useFocusEffect } from '@react-navigation/native';
 import BackButton from '../../components/backButton';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../factory/firebase';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { getDadosUsuario } from '../../services/firestore';
 
 const Login = ({ navigation }) => {
   const REQUIRED_FIELD = "Campo obrigatório";
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        return true;
+      }; 
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
+
   return (
     <>
-      <BackButton title={""} />
+      <BackButton title={""} customGoBack={() => navigation.navigate('iniciar')} />
       <View style={styles.container}>
         <Text style={styles.header}>Login</Text>
         <Formik
@@ -29,8 +42,21 @@ const Login = ({ navigation }) => {
           }}
           onSubmit={async (values, { setSubmitting }) => {
             try {
-              await signInWithEmailAndPassword(auth, values.email, values.password);
-              navigation.navigate('pesquisa');
+              const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+              
+              const userData = await getDadosUsuario();
+          
+              if (userData.userType === 'organizer') {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'criarAtividade' }],
+                });
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'pesquisa' }],
+                });
+              }              
             } catch (error) {
               console.error('Erro ao fazer login:', error);
               Alert.alert('Erro de login', 'Email ou senha inválidos.');
@@ -42,25 +68,34 @@ const Login = ({ navigation }) => {
           {({ handleChange, handleBlur, handleSubmit, values, errors, isSubmitting }) => (
             <View style={styles.formContainer}>
               <Text>Email</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                keyboardType="email-address"
-              />
+              <View style={styles.inputWrapper}>
+                <Icon name="email" size={20} color="#555" style={styles.icon} />
+                <TextInput
+                  style={styles.inputWithIcon}
+                  placeholder="Email"
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                />
+              </View>
               {errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
               <Text>Senha</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Senha"
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-                secureTextEntry
-              />
+              <View style={styles.inputWrapper}>
+                <Icon name="lock" size={20} color="#555" style={styles.icon} />
+                <TextInput
+                  style={styles.inputWithIcon}
+                  placeholder="Senha"
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
+                  secureTextEntry
+                  underlineColorAndroid="transparent"
+                />
+              </View>
               {errors.password && <Text style={styles.error}>{errors.password}</Text>}
 
               <View style={styles.buttonContainer}>
@@ -84,17 +119,26 @@ const styles = StyleSheet.create({
   formContainer: {
     flex: 1,
   },
-  input: {
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
-    padding: 10,
-    marginVertical: 10,
+    borderColor: '#ccc',
     borderRadius: 8,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
+  inputWithIcon: {
+    flex: 1,
+    paddingVertical: 10,
+  },
+  icon: {
+    marginRight: 8,
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
     marginVertical: 20,
-    paddingHorizontal: 20,
   },
   error: {
     color: 'red',
@@ -103,6 +147,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     justifyContent: "flex-end",
-    paddingBottom: 20,
+    paddingBottom: 10,
   },
 });
