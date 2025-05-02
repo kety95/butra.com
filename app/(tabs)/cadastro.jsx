@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { Formik } from 'formik';
 import BackButton from '../../components/backButton';
@@ -8,10 +8,13 @@ import { setDoc, doc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { TextInputMask } from 'react-native-masked-text';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { UserContext } from '../context/UserContext';
 
 const Cadastro = ({ navigation, route }) => {
   const REQUIRED_FIELD = "Campo obrigatório";
   const { userType } = route.params;
+  const { setUsuario } = useContext(UserContext);
+
   return (
     <>
       <BackButton title={""} customGoBack={() => navigation.navigate('iniciar')} />
@@ -55,11 +58,20 @@ const Cadastro = ({ navigation, route }) => {
                 phone: values.phone,
                 userType: userType,
               });
+
+              setUsuario({
+                name: values.name,
+                email: values.email,
+                phone: values.phone,
+                userType: userType,
+                uid: user.uid,
+              });
+
               if (userType === 'organizer') {
                 navigation.navigate('criarAtividade');
               } else {
                 navigation.navigate('pesquisa');
-              }              
+              }
             } catch (error) {
               console.error('Erro ao cadastrar:', error);
               alert('Erro ao cadastrar');

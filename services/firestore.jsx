@@ -161,3 +161,13 @@ export const getDadosUsuario = async () => {
     return null;
   }
 };
+
+export const criarAtividade = async (dados) => {
+  try {
+    const docRef = await addDoc(collection(banco, 'activities'), dados);
+    return docRef;
+  } catch (error) {
+    console.error('Erro ao criar atividade:', error);
+    throw error;
+  }
+};

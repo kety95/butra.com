@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, BackHandler } from 'react-native';
 import { Formik } from 'formik';
 import { useFocusEffect } from '@react-navigation/native';
@@ -7,15 +7,17 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../factory/firebase';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { getDadosUsuario } from '../../services/firestore';
+import { UserContext } from '../context/UserContext';
 
 const Login = ({ navigation }) => {
   const REQUIRED_FIELD = "Campo obrigatório";
+  const { setUsuario } = useContext(UserContext);
 
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
         return true;
-      }; 
+      };
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
       return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
     }, [])
@@ -43,20 +45,20 @@ const Login = ({ navigation }) => {
           onSubmit={async (values, { setSubmitting }) => {
             try {
               const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
-              
               const userData = await getDadosUsuario();
-          
+              setUsuario({ ...userData, uid: auth.currentUser.uid });
+
               if (userData.userType === 'organizer') {
                 navigation.reset({
                   index: 0,
-                  routes: [{ name: 'criarAtividade' }],
+                  routes: [{ name: 'listaAtracoes' }],
                 });
               } else {
                 navigation.reset({
                   index: 0,
                   routes: [{ name: 'pesquisa' }],
                 });
-              }              
+              }
             } catch (error) {
               console.error('Erro ao fazer login:', error);
               Alert.alert('Erro de login', 'Email ou senha inválidos.');

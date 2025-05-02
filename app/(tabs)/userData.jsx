@@ -1,30 +1,23 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import BackButton from '../../components/backButton'
-import { getDadosUsuario } from '../../services/firestore'
 import { signOut } from 'firebase/auth'
 import { auth } from '../../factory/firebase'
 import { useNavigation } from '@react-navigation/native'
 import UserAvatar from '../../components/userAvatar'
 import { Ionicons, MaterialIcons } from 'react-native-vector-icons'
+import { UserContext } from '../context/UserContext';
 
 const UserData = () => {
-  const [usuario, setUsuario] = useState(null)
-  const navigation = useNavigation()
-
-  useEffect(() => {
-    const carregarDados = async () => {
-      const dados = await getDadosUsuario()
-      setUsuario(dados)
-    }
-
-    carregarDados()
-  }, [])
+  const { usuario } = useContext(UserContext);
+  const navigation = useNavigation();
+  const { limparUsuario } = useContext(UserContext);
 
   const handleLogout = async () => {
-    await signOut(auth)
-    navigation.replace('login')
-  }
+    await signOut(auth);
+    await limparUsuario();
+    navigation.replace('login');
+  };
 
   return (
     <View style={styles.wrapper}>

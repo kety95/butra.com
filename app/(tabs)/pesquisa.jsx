@@ -61,7 +61,7 @@ const Pesquisa = ({ navigation }) => {
 
     return (
         <View>
-            <Banner tela="pesquisa" navigation={navigation} />
+            <Banner tela="pesquisa" navigation={navigation} onPress={() => navigation.navigate('pesquisa')}/>
             
             <View style={styles.fundo}>
                 <View style={styles.searchCity}>
