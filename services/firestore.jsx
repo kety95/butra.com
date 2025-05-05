@@ -1,6 +1,76 @@
-import { collection, getDocs, query, where, doc, getDoc, addDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc, addDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import banco from '../factory/firebase';
 import { auth } from '../factory/firebase';
+
+export const adicionarDatasAtividade = async (atividadeId, novasDatas) => {
+  try {
+    const atividadeRef = doc(banco, 'activities', atividadeId);
+    await updateDoc(atividadeRef, {
+      dates: arrayUnion(...novasDatas)
+    });
+  } catch (error) {
+    console.error("Erro ao adicionar datas:", error);
+    throw error;
+  }
+};
+
+export const buscarAtividadesPorOrganizador = async (organizerId) => {
+  const atividadesRef = collection(banco, 'activities');
+  const q = query(atividadesRef, where('organizer', '==', organizerId));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const buscarInscritos = async (atividadeId) => {
+  const inscritosRef = collection(banco, 'inscriptions');
+  const q = query(inscritosRef, where('atividadeId', '==', atividadeId));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const getUsersByIds = async (userIds) => {
+  const usuariosPromises = userIds.map(async (userId) => {
+    const userDoc = await getDoc(doc(banco, 'users', userId));
+    return userDoc.exists() ? userDoc.data() : null;
+  });
+  return (await Promise.all(usuariosPromises)).filter(Boolean);
+};
+
+export const buscarUsuariosAgrupadosPorData = async (atividadeId) => {
+  const inscricoes = await buscarInscritos(atividadeId);
+
+  const usuariosComData = await Promise.all(inscricoes.map(async (inscricao) => {
+    if (!inscricao.userId || !inscricao.selectedDate) return null;
+
+    const userDoc = await getDoc(doc(banco, 'users', inscricao.userId));
+    if (!userDoc.exists()) return null;
+
+    return {
+      ...userDoc.data(),
+      selectedDate: inscricao.selectedDate,
+    };
+  }));
+
+  const agrupados = {};
+
+  usuariosComData
+    .filter(Boolean)
+    .forEach((user) => {
+      if (!agrupados[user.selectedDate]) {
+        agrupados[user.selectedDate] = [];
+      }
+      agrupados[user.selectedDate].push(user);
+    });
+
+  return agrupados;
+};
+
+export const buscarUsuariosInscritosNaAtividade = async (atividadeId) => {
+  const inscritos = await buscarInscritos(atividadeId);
+  const userIds = [...new Set(inscritos.map((r) => r.userId).filter(Boolean))];
+  const usuarios = await getUsersByIds(userIds);
+  return usuarios;
+};
 
 export const getAtividadesComReviews = async () => {
   try {
@@ -145,7 +215,6 @@ export const getInscricoesDoUsuario = async () => {
 
   return inscricoes;
 };
-
 
 export const getDadosUsuario = async () => {
   const userId = auth.currentUser?.uid;

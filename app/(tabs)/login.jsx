@@ -51,7 +51,7 @@ const Login = ({ navigation }) => {
               if (userData.userType === 'organizer') {
                 navigation.reset({
                   index: 0,
-                  routes: [{ name: 'listaAtracoes' }],
+                  routes: [{ name: 'minhasAtracoes' }],
                 });
               } else {
                 navigation.reset({

@@ -1,19 +1,21 @@
-// Converte 'YYYY-MM-DD' para 'DD/MM/AA'
-export function formatDateToDisplay(dateStr) {
-    if (!dateStr) return '';
-    const [year, month, day] = dateStr.split('-');
-    return `${day}/${month}/${year.slice(2)}`;
-  }
-  
-// Converte 'DD/MM/AA' para 'YYYY-MM-DD'
+// Converte 'YYYY-MM-DD' ou 'YYYY-MM-DD' para 'DD/MM/AA'
+export const formatDateToDisplay = (dateString) => {
+  if (!dateString) return '';
+  const [year, month, day] = dateString.includes('/')
+    ? dateString.split('/')
+    : dateString.split('-');
+
+  return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+};
+
+// Converte 'YYYY/MM/DD' para 'YYYY-MM-DD'
 export function toApiDate(dateStr) {
-    const [day, month, year] = dateStr.split('/');
-    const fullYear = year.length === 2 ? `20${year}` : year;
-    return `${fullYear}-${month}-${day}`;
-  }
-  
+  if (dateStr.includes('-')) return dateStr;
+  const [year, month, day] = dateStr.split('/');
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
 // Converte 'YYYY-MM-DD' para 'DD de mês por extenso de YYYY'
-// Ex: '2025-04-15' => '15 de abril de 2025'
 export function formatFullDate(dateStr) {
     if (!dateStr) return '';
     const [year, month, day] = dateStr.split('-');

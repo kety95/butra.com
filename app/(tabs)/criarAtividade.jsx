@@ -39,15 +39,13 @@ const CriarAtividade = ({ navigation }) => {
           ? values.accessibilities.split(',').map(a => a.trim())
           : [],
         organizer: usuario.uid,
-        participants: [],
-        reviews: []
       };
 
       await criarAtividade(dados);
 
       alert('Atividade criada com sucesso!');
       resetForm();
-      navigation.navigate('listaAtracoes')
+      navigation.navigate('minhasAtracoes')
     } catch (error) {
       alert('Erro ao criar atividade');
     } finally {

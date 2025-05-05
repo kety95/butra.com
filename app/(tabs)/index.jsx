@@ -12,8 +12,9 @@ import Notificacoes from './notificacoes'
 import Login from './login'
 import UserData from './userData'
 import { AtividadesProvider } from '../context/AtividadesContext'
-import ListaAtracoes from './listaAtracoes'
+import MinhasAtracoes from './minhasAtracoes'
 import { UserProvider } from '../context/UserContext';
+import Inscritos from './inscritos'
 
 const Stack = createNativeStackNavigator();
 
@@ -37,7 +38,8 @@ const App = () => {
           <Stack.Screen name="login" options={{ headerShown: false }} component={Login} />
           <Stack.Screen name="criarAtividade" options={{ headerShown: false }} component={CriarAtividade} />
           <Stack.Screen name="userData" options={{ headerShown: false }} component={UserData} />
-          <Stack.Screen name="listaAtracoes" options={{ headerShown: false }} component={ListaAtracoes} />
+          <Stack.Screen name="minhasAtracoes" options={{ headerShown: false }} component={MinhasAtracoes} />
+          <Stack.Screen name="inscritos" options={{ headerShown: false }} component={Inscritos} />
         </Stack.Navigator>
       </UserProvider>
     </AtividadesProvider>

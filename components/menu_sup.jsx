@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { Colors } from '../constants/Colors'
 import TicketIcon from 'react-native-vector-icons/MaterialCommunityIcons'
-import SettingsIcon from 'react-native-vector-icons/Feather'
 import AddIcon from 'react-native-vector-icons/Ionicons'
 
 import React from 'react'
