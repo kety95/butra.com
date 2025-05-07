@@ -9,6 +9,7 @@ import Checkbox from 'expo-checkbox';
 import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-modern-datepicker';
 import { UserContext } from '../context/UserContext';
+import { minimunDate, toApiDate, formatDateToDisplay } from '../utils/dateUtils';
 
 const CriarAtividade = ({ navigation }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -30,7 +31,7 @@ const CriarAtividade = ({ navigation }) => {
       const dados = {
         title: values.title,
         image: values.image,
-        dates: values.dates,
+        dates: values.dates.map(toApiDate),
         description: values.description,
         location: values.location,
         address: values.address,
@@ -118,12 +119,12 @@ const CriarAtividade = ({ navigation }) => {
                 {values.dates.length > 0 ? (
                   values.dates.map((date, index) => (
                     <View key={index} style={styles.dateItem}>
-                      <Text>{date}</Text>
+                      <Text>{formatDateToDisplay(date)}</Text>
                       <TouchableOpacity onPress={() => {
                         const updatedDates = values.dates.filter((_, i) => i !== index);
                         setFieldValue('dates', updatedDates);
                       }}>
-                        <Text style={styles.removeDateText}>Remover</Text>
+                        <Text style={{ color: 'red', marginLeft: 8 }}>✕</Text>
                       </TouchableOpacity>
                     </View>
                   ))
@@ -136,6 +137,7 @@ const CriarAtividade = ({ navigation }) => {
                   <View style={styles.datePickerModal}>
                     <DatePicker
                       mode="calendar"
+                      minimumDate={minimunDate()}
                       onSelectedChange={(date) => {
                         if (!values.dates.includes(date)) {
                           setFieldValue('dates', [...values.dates, date]);

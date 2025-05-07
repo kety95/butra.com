@@ -14,6 +14,31 @@ export const adicionarDatasAtividade = async (atividadeId, novasDatas) => {
   }
 };
 
+export const buscarDatasAtividade = async (atividadeId) => {
+  try {
+    const docRef = doc(banco, 'activities', atividadeId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const todasDatas = docSnap.data().dates || [];
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
+      const datasFuturas = todasDatas.filter((dataStr) => {
+        const data = new Date(dataStr);
+        return data >= hoje;
+      });
+
+      return datasFuturas;
+    }
+
+    return [];
+  } catch (error) {
+    console.error("Erro ao buscar datas:", error);
+    throw error;
+  }
+};
+
 export const buscarAtividadesPorOrganizador = async (organizerId) => {
   const atividadesRef = collection(banco, 'activities');
   const q = query(atividadesRef, where('organizer', '==', organizerId));
@@ -74,18 +99,26 @@ export const buscarUsuariosInscritosNaAtividade = async (atividadeId) => {
 
 export const getAtividadesComReviews = async () => {
   try {
-    // Busca todas as atividades
     const atividadesSnapshot = await getDocs(collection(banco, 'activities'));
-    const atividades = atividadesSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const hoje = new Date().toISOString().split('T')[0];
 
-    // Busca todas as avaliações
+    const atividades = atividadesSnapshot.docs
+      .map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      .map(atividade => {
+        const datasFuturas = (atividade.dates || []).filter(data => data >= hoje);
+        return {
+          ...atividade,
+          dates: datasFuturas,
+        };
+      })
+      .filter(atividade => atividade.dates.length > 0);
+
     const reviewsSnapshot = await getDocs(collection(banco, 'reviews'));
     const reviews = reviewsSnapshot.docs.map(doc => doc.data());
 
-    // Conta as avaliações de cada atividade
     const reviewsCount = reviews.reduce((acc, review) => {
       const activityId = review.activity?.id;
       if (activityId) {
@@ -94,7 +127,6 @@ export const getAtividadesComReviews = async () => {
       return acc;
     }, {});
 
-    // Junta o count de avaliações nas atividades
     const atividadesComReviews = atividades.map(atividade => ({
       ...atividade,
       reviewsCount: reviewsCount[atividade.id] || 0,
@@ -147,7 +179,6 @@ export const getUsersByRefs = async (userRefs) => {
 
 export const inscreverAtividade = async (atividadeId, selectedDate) => {
   const userId = auth.currentUser?.uid;
-  console.log(userId)
   if (!userId) return;
 
   const q = query(

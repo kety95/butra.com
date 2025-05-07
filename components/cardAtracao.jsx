@@ -1,34 +1,46 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import IconCalendar from 'react-native-vector-icons/Feather';
 import DatePicker from 'react-native-modern-datepicker';
 import { Colors } from '../constants/Colors';
-import { adicionarDatasAtividade } from '../services/firestore';
-import { toApiDate, formatDateToDisplay } from '@/app/utils/dateUtils';
+import { adicionarDatasAtividade, buscarDatasAtividade } from '../services/firestore';
+import { toApiDate, formatDateToDisplay, minimunDate } from '@/app/utils/dateUtils';
 
 const CardAtracao = (props) => {
   const navigation = useNavigation();
-  const { image, title, id, dates = [] } = props.atracao;
-  const [datasExistentes, setDatasExistentes] = useState(dates);
-
+  const { image, title, id } = props.atracao;
+  const [datasExistentes, setDatasExistentes] = useState([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [datas, setDatas] = useState([]);
 
-  const handleAddDate = (date) => {
-    const formattedDate = formatDateToDisplay(date);
+  useEffect(() => {
+    const carregarDatas = async () => {
+      try {
+        const datas = await buscarDatasAtividade(id);
+        setDatasExistentes(datas);
+      } catch (error) {
+        console.error('Erro ao carregar datas da atividade:', error);
+      }
+    };
 
-    if (datas.includes(formattedDate)) {
+    carregarDatas();
+  }, [id]);
+
+  const handleAddDate = (date) => {
+    const apiFormatted = toApiDate(date);
+
+    if (datas.includes(apiFormatted)) {
       return;
     }
 
-    const formattedExistingDates = datasExistentes.map(d => formatDateToDisplay(d));
-    if (formattedExistingDates.includes(formattedDate)) {
+    const existingFormatted = datasExistentes.map(d => toApiDate(d));
+    if (existingFormatted.includes(apiFormatted)) {
       alert('Data já existente', 'Essa data já está disponível para a atividade.');
       return;
     }
-    setDatas(prev => [...prev, formattedDate]);
 
+    setDatas(prev => [...prev, apiFormatted]);
   };
 
   const handleRemoveDate = (index) => {
@@ -56,7 +68,6 @@ const CardAtracao = (props) => {
       console.error('Erro ao salvar datas:', error);
       alert('Erro', 'Não foi possível salvar as datas. Tente novamente.');
     }
-
   };
 
   return (
@@ -82,23 +93,24 @@ const CardAtracao = (props) => {
               <Text style={styles.btn_txt}>Adicionar datas</Text>
             </TouchableOpacity>
           </View>
-
         </View>
       </TouchableOpacity>
 
-      {/*Modal */}
+      {/* Modal */}
       {showDatePicker && (
         <View style={styles.containerModal}>
           {/* Datas já existentes */}
-          {dates.length > 0 && (
+          {datasExistentes.length > 0 && (
             <>
               <Text style={styles.subtitle}>Datas existentes:</Text>
               <View style={styles.data}>
-                {dates.map((data, index) => (
-                  <View key={index} style={styles.dateItem}>
-                    <Text>{formatDateToDisplay(data)}</Text>
-                  </View>
-                ))}
+                {[...datasExistentes]
+                  .sort((a, b) => new Date(a) - new Date(b))
+                  .map((data, index) => (
+                    <View key={index} style={styles.dateItem}>
+                      <Text>{formatDateToDisplay(data)}</Text>
+                    </View>
+                  ))}
               </View>
             </>
           )}
@@ -110,7 +122,7 @@ const CardAtracao = (props) => {
               <View style={styles.data}>
                 {datas.map((data, index) => (
                   <View key={index} style={styles.dateItem}>
-                    <Text>{data}</Text>
+                    <Text>{formatDateToDisplay(data)}</Text>
                     <TouchableOpacity onPress={() => handleRemoveDate(index)}>
                       <Text style={{ color: 'red', marginLeft: 8 }}>✕</Text>
                     </TouchableOpacity>
@@ -124,6 +136,7 @@ const CardAtracao = (props) => {
           <View style={styles.datePickerModal}>
             <DatePicker
               mode="calendar"
+              minimumDate={minimunDate()}
               onSelectedChange={handleAddDate}
               options={{
                 backgroundColor: '#fff',
@@ -148,9 +161,7 @@ const CardAtracao = (props) => {
           )}
         </View>
       )}
-
     </>
-
   );
 };
 

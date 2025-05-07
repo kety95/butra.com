@@ -5,9 +5,8 @@ import React, { useState } from 'react';
 import IconSearch from 'react-native-vector-icons/AntDesign';
 import IconCalendar from 'react-native-vector-icons/Feather';
 import DatePicker from 'react-native-modern-datepicker';
-import { getFormatedDate } from 'react-native-modern-datepicker';
 import Autocomplete from 'react-native-autocomplete-input';
-import { formatDateToDisplay } from '../utils/dateUtils';
+import { formatDateToDisplay, minimunDate } from '../utils/dateUtils';
 
 const capitais = [
     "Buenos Aires", "São Paulo", "Brasília", "Paris", "Londres", "Roma", "Madrid", 
@@ -15,9 +14,6 @@ const capitais = [
 ];
 
 const Pesquisa = ({ navigation }) => {
-    const today = new Date();
-    const startDate = getFormatedDate(today.setDate(today.getDate() + 1), 'YYYY/MM/DD');
-
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState('');
 
@@ -123,7 +119,7 @@ const Pesquisa = ({ navigation }) => {
                             </View>
                             <DatePicker
                                 mode="calendar"
-                                minimumDate={startDate}
+                                minimumDate={minimunDate()}
                                 selected={date}
                                 onSelectedChange={handleChange}
                             />
