@@ -9,7 +9,7 @@ import { toApiDate, formatDateToDisplay, minimunDate } from '@/app/utils/dateUti
 
 const CardAtracao = (props) => {
   const navigation = useNavigation();
-  const { image, title, id } = props.atracao;
+  const { id, title, image, reviewsCount, description, accessibilities, location, adress, dates } = props.atracao;
   const [datasExistentes, setDatasExistentes] = useState([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [datas, setDatas] = useState([]);
@@ -72,8 +72,17 @@ const CardAtracao = (props) => {
 
   return (
     <>
-      <TouchableOpacity style={styles.card} activeOpacity={1}>
-        <Image source={{ uri: image }} style={styles.image} />
+      <View style={styles.card}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('detalhesatividade',
+            {
+              atividade: { id, title, image, description, accessibilities, location, adress, dates },
+              reviewsCount,
+              mostrarBotaoInscricao: false
+            })}
+        >
+          <Image source={{ uri: image }} style={styles.image} />
+        </TouchableOpacity>
         <View style={styles.info}>
           <Text style={styles.title}>{title}</Text>
           {/* Botões */}
@@ -94,7 +103,7 @@ const CardAtracao = (props) => {
             </TouchableOpacity>
           </View>
         </View>
-      </TouchableOpacity>
+      </View>
 
       {/* Modal */}
       {showDatePicker && (

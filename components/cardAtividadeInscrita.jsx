@@ -8,7 +8,7 @@ import { formatDateToDisplay } from '../app/utils/dateUtils';
 import { Colors } from '../constants/Colors';
 import { registrarAvaliacao } from '../services/firestore';
 
-const CardAtividadeInscrita = ({ id, title, dates, image, reviewsCount, description, accessibilities, location, adress, selectedDate }) => {
+const CardAtividadeInscrita = ({  id, title, image, reviewsCount, description, accessibilities, location, adress, selectedDate }) => {
   const navigation = useNavigation();
   const { cancelarInscricao } = useAtividades();
 
@@ -84,10 +84,9 @@ const CardAtividadeInscrita = ({ id, title, dates, image, reviewsCount, descript
     <>
       <View style={styles.card}>
         <TouchableOpacity
-
           onPress={() => navigation.navigate('detalhesatividade',
             {
-              atividade: { id, title, image, description, accessibilities, location, adress, dates },
+              atividade: { id, title, image, description, accessibilities, location, adress },
               reviewsCount
             })}
         >

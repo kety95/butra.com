@@ -29,7 +29,7 @@ const MinhasAtividades = () => {
       <BackButton title="Minhas atividades" />
       <View style={styles.listContainer}>
         <FlatList
-          data={minhasAtividades}
+          data={[...minhasAtividades].sort((a, b) => new Date(b.selectedDate) - new Date(a.selectedDate))}
           keyExtractor={(item) => `${item.id}-${item.selectedDate}`}
           contentContainerStyle={styles.flatListContent}
           renderItem={({ item }) => (

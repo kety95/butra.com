@@ -12,7 +12,7 @@ import { getReviewsCountByActivity } from '../../services/firestore'
 
 const DetalhesAtividade = ({ route }) => {
     const navigation = useNavigation();
-    const { atividade } = route.params;
+    const { atividade, mostrarBotaoInscricao = true } = route.params;
     const [reviewsCount, setReviewsCount] = useState(0);
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -22,32 +22,32 @@ const DetalhesAtividade = ({ route }) => {
 
     useEffect(() => {
         const fetchReviewsCount = async () => {
-          try {
-            const count = await getReviewsCountByActivity(atividade.id);
-            setReviewsCount(count);
-          } catch (error) {
-            console.error('Erro ao buscar avaliações:', error);
-          }
+            try {
+                const count = await getReviewsCountByActivity(atividade.id);
+                setReviewsCount(count);
+            } catch (error) {
+                console.error('Erro ao buscar avaliações:', error);
+            }
         };
-      
+
         fetchReviewsCount();
-      }, [atividade.id]);
+    }, [atividade.id]);
 
     const jaInscrito = selectedDate && minhasAtividades.some(
         (a) => a.id === atividade.id && a.selectedDate === selectedDate
-      );      
+    );
 
-      const handleInscricao = async () => {
+    const handleInscricao = async () => {
         if (!selectedDate) {
             alert("Selecione uma data.");
             return;
         }
-    
+
         if (jaInscrito) {
             alert("Você já está inscrito nessa atividade para esta data.");
             return;
         }
-    
+
         try {
             await inscreverAtividade(atividade, selectedDate);
             alert('Você se inscreveu com sucesso!');
@@ -57,7 +57,7 @@ const DetalhesAtividade = ({ route }) => {
             alert("Erro ao se inscrever. Tente novamente.");
         }
     };
-    
+
 
     const toggleDescription = () => {
         setIsExpanded(!isExpanded);
@@ -106,18 +106,25 @@ const DetalhesAtividade = ({ route }) => {
                     </View>
                     <Text>{atividade.adress}</Text>
 
-                    <Text style={styles.h2}>Data</Text>
-                    <DateCard dates={atividade.dates} onSelectDate={setSelectedDate} />
+                    {atividade.dates && atividade.dates.length > 0 && (
+                        <>
+                            <Text style={styles.h2}>Datas</Text>
+                            <DateCard dates={atividade.dates} onSelectDate={setSelectedDate} />
 
-                    <TouchableOpacity
-                        style={[styles.btn, jaInscrito && styles.btnDisabled]}
-                        onPress={handleInscricao}
-                        disabled={jaInscrito}
-                    >
-                        <Text style={styles.btn_txt}>
-                            {jaInscrito ? 'Já inscrito' : 'Me inscrever'}
-                        </Text>
-                    </TouchableOpacity>
+                            {mostrarBotaoInscricao && (
+                                <TouchableOpacity
+                                    style={[styles.btn, jaInscrito && styles.btnDisabled]}
+                                    onPress={handleInscricao}
+                                    disabled={jaInscrito}
+                                >
+                                    <Text style={styles.btn_txt}>
+                                        {jaInscrito ? 'Já inscrito' : 'Me inscrever'}
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                        </>
+                    )}
+
                 </View>
             </ScrollView>
         </>
