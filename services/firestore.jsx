@@ -2,6 +2,95 @@ import { collection, getDocs, query, where, doc, getDoc, addDoc, updateDoc, arra
 import banco from '../factory/firebase';
 import { auth } from '../factory/firebase';
 
+export const registrarAvaliacao = async (atividadeId, stars, description, selectedDate) => {
+  const userId = auth.currentUser?.uid;
+  if (!userId) throw new Error('Usuário não autenticado');
+
+  const atividadeRef = doc(banco, 'activities', atividadeId);
+  const userRef = doc(banco, 'users', userId);
+
+  await addDoc(collection(banco, 'reviews'), {
+    activity: atividadeRef,
+    participant: userRef,
+    stars,
+    description,
+  });
+
+  const q = query(
+    collection(banco, 'inscriptions'),
+    where('userId', '==', userId),
+    where('atividadeId', '==', atividadeId),
+    where('selectedDate', '==', selectedDate)
+  );
+
+  const snapshot = await getDocs(q);
+  const inscricaoDoc = snapshot.docs[0];
+
+  if (inscricaoDoc) {
+    const inscricaoRef = doc(banco, 'inscriptions', inscricaoDoc.id);
+    await updateDoc(inscricaoRef, {
+      reviewed: true,
+    });
+  } else {
+    throw new Error('Inscrição não encontrada');
+  }
+};
+
+export const getInscricoesDoUsuario = async () => {
+  const userId = auth.currentUser?.uid;
+  if (!userId) return [];
+
+  const q = query(
+    collection(banco, 'inscriptions'),
+    where('userId', '==', userId),
+    where('reviewed', '!=', true)
+  );
+  
+  const snapshot = await getDocs(q);
+
+  const inscricoes = await Promise.all(
+    snapshot.docs.map(async (docSnap) => {
+      const data = docSnap.data();
+      const atividadeRef = doc(banco, 'activities', data.atividadeId);
+      const atividadeDoc = await getDoc(atividadeRef);
+
+      return {
+        id: docSnap.id,
+        ...data,
+        atividade: atividadeDoc.exists() ? { id: atividadeDoc.id, ...atividadeDoc.data() } : null,
+      };
+    })
+  );
+
+  return inscricoes;
+};
+
+export const inscreverAtividade = async (atividadeId, selectedDate) => {
+  const userId = auth.currentUser?.uid;
+  if (!userId) return;
+
+  const q = query(
+    collection(banco, 'inscriptions'),
+    where('userId', '==', userId),
+    where('atividadeId', '==', atividadeId),
+    where('selectedDate', '==', selectedDate)
+  );
+
+  const snapshot = await getDocs(q);
+  if (!snapshot.empty) {
+    alert('Você já está inscrito nesta atividade para essa data!');
+    return;
+  }
+
+  await addDoc(collection(banco, 'inscriptions'), {
+    userId,
+    atividadeId,
+    selectedDate,
+    timestamp: new Date(),
+    reviewed: false
+  });
+};
+
 export const adicionarDatasAtividade = async (atividadeId, novasDatas) => {
   try {
     const atividadeRef = doc(banco, 'activities', atividadeId);
@@ -177,31 +266,6 @@ export const getUsersByRefs = async (userRefs) => {
   }
 };
 
-export const inscreverAtividade = async (atividadeId, selectedDate) => {
-  const userId = auth.currentUser?.uid;
-  if (!userId) return;
-
-  const q = query(
-    collection(banco, 'inscriptions'),
-    where('userId', '==', userId),
-    where('atividadeId', '==', atividadeId),
-    where('selectedDate', '==', selectedDate)
-  );
-
-  const snapshot = await getDocs(q);
-  if (!snapshot.empty) {
-    alert('Você já está inscrito nesta atividade para essa data!');
-    return;
-  }
-
-  await addDoc(collection(banco, 'inscriptions'), {
-    userId,
-    atividadeId,
-    selectedDate,
-    timestamp: new Date()
-  });
-};
-
 export const cancelarInscricao = async (atividadeId, selectedDate) => {
   const userId = auth.currentUser?.uid;
   if (!userId) return;
@@ -215,36 +279,12 @@ export const cancelarInscricao = async (atividadeId, selectedDate) => {
 
   const snapshot = await getDocs(q);
 
-    const deletions = snapshot.docs.map((docSnap) => {
-      console.log("Removendo:", docSnap.id, docSnap.data());
-      return deleteDoc(doc(banco, 'inscriptions', docSnap.id));
-    });
+  const deletions = snapshot.docs.map((docSnap) => {
+    console.log("Removendo:", docSnap.id, docSnap.data());
+    return deleteDoc(doc(banco, 'inscriptions', docSnap.id));
+  });
 
-    await Promise.all(deletions);
-};
-
-export const getInscricoesDoUsuario = async () => {
-  const userId = auth.currentUser?.uid;
-  if (!userId) return [];
-
-  const q = query(collection(banco, 'inscriptions'), where('userId', '==', userId));
-  const snapshot = await getDocs(q);
-
-  const inscricoes = await Promise.all(
-    snapshot.docs.map(async (docSnap) => {
-      const data = docSnap.data();
-      const atividadeRef = doc(banco, 'activities', data.atividadeId);
-      const atividadeDoc = await getDoc(atividadeRef);
-
-      return {
-        id: docSnap.id,
-        ...data,
-        atividade: atividadeDoc.exists() ? { id: atividadeDoc.id, ...atividadeDoc.data() } : null,
-      };
-    })
-  );
-
-  return inscricoes;
+  await Promise.all(deletions);
 };
 
 export const getDadosUsuario = async () => {

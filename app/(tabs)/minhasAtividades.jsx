@@ -72,6 +72,9 @@ const styles = StyleSheet.create({
     flatListContent: {
         paddingBottom: 100,
       },
+    listContainer: {
+  flex: 1,
+}
   });
   
   export default MinhasAtividades;

@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btn1: {
-    backgroundColor: '#FFC300',
+    backgroundColor: Colors.detailsColor2,
   },
   btn2: {
     backgroundColor: 'white',
