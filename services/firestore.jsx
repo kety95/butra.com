@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where, doc, getDoc, addDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc, addDoc, updateDoc, arrayUnion, deleteDoc } from 'firebase/firestore';
 import banco from '../factory/firebase';
 import { auth } from '../factory/firebase';
 
@@ -268,6 +268,7 @@ export const getUsersByRefs = async (userRefs) => {
 
 export const cancelarInscricao = async (atividadeId, selectedDate) => {
   const userId = auth.currentUser?.uid;
+  console.log(userId)
   if (!userId) return;
 
   const q = query(
@@ -280,7 +281,6 @@ export const cancelarInscricao = async (atividadeId, selectedDate) => {
   const snapshot = await getDocs(q);
 
   const deletions = snapshot.docs.map((docSnap) => {
-    console.log("Removendo:", docSnap.id, docSnap.data());
     return deleteDoc(doc(banco, 'inscriptions', docSnap.id));
   });
 

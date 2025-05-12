@@ -8,7 +8,7 @@ import { formatDateToDisplay } from '../app/utils/dateUtils';
 import { Colors } from '../constants/Colors';
 import { registrarAvaliacao } from '../services/firestore';
 
-const CardAtividadeInscrita = ({  id, title, image, reviewsCount, description, accessibilities, location, adress, selectedDate }) => {
+const CardAtividadeInscrita = ({ id, title, image, reviewsCount, description, accessibilities, location, adress, selectedDate }) => {
   const navigation = useNavigation();
   const { cancelarInscricao } = useAtividades();
 
@@ -16,21 +16,27 @@ const CardAtividadeInscrita = ({  id, title, image, reviewsCount, description, a
   const [avaliacaoTexto, setAvaliacaoTexto] = React.useState('');
   const [nota, setNota] = React.useState(0);
 
-  const handleCancelar = () => {
-    Alert.alert(
-      "Cancelar inscrição",
-      "Deseja cancelar sua inscrição nesta atividade?",
-      [
-        { text: "Não", style: "cancel" },
-        {
-          text: "Sim",
-          onPress: () => {
-            cancelarInscricao(id, selectedDate);
-            Alert.alert('Inscrição cancelada!', 'Você não está mais inscrito nesta atividade');
+  const handleCancelar = async () => {
+    try {
+      Alert.alert(
+        "Cancelar inscrição",
+        "Deseja cancelar sua inscrição nesta atividade?",
+        [
+          { text: "Não", style: "cancel" },
+          {
+            text: "Sim",
+            onPress: () => {
+              cancelarInscricao(id, selectedDate);
+              Alert.alert('Inscrição cancelada!', 'Você não está mais inscrito nesta atividade');
+            }
           }
-        }
-      ]
-    );
+        ]
+      );
+    } catch (e) {
+      console.error("Erro ao cancelar inscrição:", e);
+      alert("Erro ao cancelar inscrição.");
+    }
+
   };
 
   const enviarAvaliacao = async () => {
@@ -132,7 +138,7 @@ const CardAtividadeInscrita = ({  id, title, image, reviewsCount, description, a
             style={styles.input}
           />
 
-          <TouchableOpacity onPress={enviarAvaliacao} style={[styles.btn,{backgroundColor: Colors.detailsColor2}, { alignSelf: 'flex-end' }]}>
+          <TouchableOpacity onPress={enviarAvaliacao} style={[styles.btn, { backgroundColor: Colors.detailsColor2 }, { alignSelf: 'flex-end' }]}>
             <Text style={styles.btn_txt}>Finalizar</Text>
           </TouchableOpacity>
         </View>
