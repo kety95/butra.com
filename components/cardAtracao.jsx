@@ -74,12 +74,24 @@ const CardAtracao = (props) => {
     <>
       <View style={styles.card}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('detalhesatividade',
-            {
-              atividade: { id, title, image, description, accessibilities, location, adress, dates },
+          onPress={() => {
+            const datasFuturas = (dates || []).filter(date => new Date(date) >= new Date());
+
+            navigation.navigate('detalhesatividade', {
+              atividade: {
+                id,
+                title,
+                image,
+                description,
+                accessibilities,
+                location,
+                adress,
+                dates: datasFuturas
+              },
               reviewsCount,
               mostrarBotaoInscricao: false
-            })}
+            });
+          }}
         >
           <Image source={{ uri: image }} style={styles.image} />
         </TouchableOpacity>

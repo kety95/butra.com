@@ -1,17 +1,28 @@
-import { View, Text, Image, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, ScrollView, RefreshControl } from 'react-native';
 import React from 'react';
 import BackButton from '../../components/backButton';
-import { useAtividades } from '../context/AtividadesContext';
+import { useMinhasAtividades } from '../context/MinhasAtividadesContext';
 import CardAtividadeInscrita from '@/components/cardAtividadeInscrita';
 
 const MinhasAtividades = () => {
-  const { minhasAtividades } = useAtividades();
+  const { minhasAtividades, carregarInscricoes } = useMinhasAtividades();
+  const [refreshing, setRefreshing] = React.useState(false);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await carregarInscricoes();
+    setRefreshing(false);
+  };
+  // console.log(...minhasAtividades)
   if (minhasAtividades.length === 0) {
     return (
       <>
         <BackButton title="Minhas atividades" />
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           <View style={styles.container}>
             <Image source={require('../../assets/images/semAtiv.svg')} style={styles.image} />
             <Text style={styles.pergunta}>Qual será a próxima atividade?</Text>
@@ -29,14 +40,18 @@ const MinhasAtividades = () => {
       <BackButton title="Minhas atividades" />
       <View style={styles.listContainer}>
         <FlatList
-          data={[...minhasAtividades].sort((a, b) => new Date(b.selectedDate) - new Date(a.selectedDate))}
+          data={[...minhasAtividades].
+            filter(item => item.review).
+            sort((a, b) => new Date(b.selectedDate) - new Date(a.selectedDate))}
           keyExtractor={(item) => `${item.id}-${item.selectedDate}`}
           contentContainerStyle={styles.flatListContent}
           renderItem={({ item }) => (
             <View style={styles.atividadeContainer}>
-              <CardAtividadeInscrita {...item.atividade} selectedDate={item.selectedDate} />
+              <CardAtividadeInscrita {...item.atividade} selectedDate={item.selectedDate} atividadeId={item.atividade.id}/>
             </View>
           )}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
         />
       </View>
     </>

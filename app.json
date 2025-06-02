@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.kety95.Butracom"
     },
     "web": {
       "bundler": "metro",
@@ -44,6 +45,7 @@
       "eas": {
         "projectId": "583a2745-1390-4212-bd8d-01dc8fcdabc2"
       }
-    }
+    },
+    "owner": "kety95"
   }
 }

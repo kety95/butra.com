@@ -10,22 +10,23 @@ const MinhasAtracoes = ({ navigation }) => {
   const [atividades, setAtividades] = useState([]);
   const [carregando, setCarregando] = useState(true);
 
-  useEffect(() => {
-    const carregarAtividades = async () => {
-      try {
-        const lista = await buscarAtividadesPorOrganizador(usuario.uid);
-        setAtividades(lista);
-      } catch (error) {
-        console.error('Erro ao buscar atividades:', error);
-      } finally {
-        setCarregando(false);
-      }
-    };
+useEffect(() => {
+  const carregarAtividades = async () => {
+    if (!usuario?.uid) return;
 
-    if (usuario) {
-      carregarAtividades();
+    try {
+      const lista = await buscarAtividadesPorOrganizador(usuario.uid);
+      setAtividades(lista);
+    } catch (error) {
+      console.error('Erro ao buscar atividades:', error);
+    } finally {
+      setCarregando(false);
     }
-  }, [usuario]);
+  };
+
+  carregarAtividades();
+}, [usuario]);
+
 
   if (carregando) {
     return <ActivityIndicator size="large" />;

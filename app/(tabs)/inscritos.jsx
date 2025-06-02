@@ -51,7 +51,7 @@ const Inscritos = () => {
                       filtroData === data && styles.filtroAtivo,
                     ]}
                   >
-                    {new Date(data).toLocaleDateString()}
+                    {new Date(`${data}T00:00:00`).toLocaleDateString()}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -64,7 +64,8 @@ const Inscritos = () => {
             exibirDatas.map((data) => (
               <View key={data} style={styles.blocoData}>
                 <Text style={styles.dataTitulo}>
-                  {new Date(data).toLocaleDateString()} (inscritos: {usuariosPorData[data].length})
+                  {new Date(`${data}T00:00:00`).toLocaleDateString()}
+                  (inscritos: {usuariosPorData[data].length})
                 </Text>
                 {usuariosPorData[data].map((user, index) => (
                   <View key={index} style={styles.userBox}>

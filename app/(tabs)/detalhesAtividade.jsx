@@ -6,7 +6,7 @@ import IconStar from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '../../constants/Colors';
 import AcessibilidadeInfo from '../../components/acessibilidadeInfo';
 import BackButton from '../../components/backButton';
-import { useAtividades } from '../context/AtividadesContext';
+import { useMinhasAtividades } from '../context/MinhasAtividadesContext';
 import DateCard from '../../components/dateCard';
 import { getReviewsCountByActivity } from '../../services/firestore'
 
@@ -18,7 +18,7 @@ const DetalhesAtividade = ({ route }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
 
-    const { minhasAtividades, inscreverAtividade } = useAtividades();
+    const { minhasAtividades, inscreverAtividade } = useMinhasAtividades();
 
     useEffect(() => {
         const fetchReviewsCount = async () => {

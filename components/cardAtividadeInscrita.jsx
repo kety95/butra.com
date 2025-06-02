@@ -3,14 +3,23 @@ import Icon from 'react-native-vector-icons/Feather';
 import StarIcon from 'react-native-vector-icons/FontAwesome';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useAtividades } from '../app/context/AtividadesContext';
+import { useMinhasAtividades } from '../app/context/MinhasAtividadesContext';
 import { formatDateToDisplay } from '../app/utils/dateUtils';
 import { Colors } from '../constants/Colors';
-import { registrarAvaliacao } from '../services/firestore';
 
-const CardAtividadeInscrita = ({ id, title, image, reviewsCount, description, accessibilities, location, adress, selectedDate }) => {
+const CardAtividadeInscrita = ({
+  atividadeId,
+  title,
+  image,
+  reviewsCount,
+  description,
+  accessibilities,
+  location,
+  adress,
+  selectedDate,
+}) => {
   const navigation = useNavigation();
-  const { cancelarInscricao } = useAtividades();
+  const { cancelarInscricao, avaliarAtividade } = useMinhasAtividades();
 
   const [avaliando, setAvaliando] = React.useState(false);
   const [avaliacaoTexto, setAvaliacaoTexto] = React.useState('');
@@ -25,8 +34,8 @@ const CardAtividadeInscrita = ({ id, title, image, reviewsCount, description, ac
           { text: "Não", style: "cancel" },
           {
             text: "Sim",
-            onPress: () => {
-              cancelarInscricao(id, selectedDate);
+            onPress: async () => {
+              await cancelarInscricao(atividadeId, selectedDate);
               Alert.alert('Inscrição cancelada!', 'Você não está mais inscrito nesta atividade');
             }
           }
@@ -36,16 +45,15 @@ const CardAtividadeInscrita = ({ id, title, image, reviewsCount, description, ac
       console.error("Erro ao cancelar inscrição:", e);
       alert("Erro ao cancelar inscrição.");
     }
-
   };
 
-  const enviarAvaliacao = async () => {
+  const avaliar = async () => {
     if (nota === 0 || avaliacaoTexto.trim() === '') {
       Alert.alert("Preencha todos os campos", "Dê uma nota e escreva sua avaliação.");
       return;
     }
 
-    await registrarAvaliacao(id, nota, avaliacaoTexto, selectedDate);
+    await avaliarAtividade(atividadeId, nota, avaliacaoTexto, selectedDate);
 
     alert("Sua avaliação foi registrada.");
     setAvaliando(false);
@@ -77,24 +85,28 @@ const CardAtividadeInscrita = ({ id, title, image, reviewsCount, description, ac
     </View>
   );
 
-  let conteudo = '';
   const hoje = new Date();
   const dataAtividade = new Date(selectedDate);
-  if (dataAtividade < hoje) {
-    conteudo = inscricaoVencida;
-  } else {
-    conteudo = inscricaoAtiva;
-  }
+  const conteudo = dataAtividade < hoje ? inscricaoVencida : inscricaoAtiva;
 
   return (
     <>
       <View style={styles.card}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('detalhesatividade',
-            {
-              atividade: { id, title, image, description, accessibilities, location, adress },
-              reviewsCount
-            })}
+          onPress={() =>
+            navigation.navigate('detalhesatividade', {
+              atividade: {
+                id: atividadeId,
+                title,
+                image,
+                description,
+                accessibilities,
+                location,
+                adress,
+              },
+              reviewsCount,
+            })
+          }
         >
           <Image source={{ uri: image }} style={styles.image} />
         </TouchableOpacity>
@@ -138,12 +150,18 @@ const CardAtividadeInscrita = ({ id, title, image, reviewsCount, description, ac
             style={styles.input}
           />
 
-          <TouchableOpacity onPress={enviarAvaliacao} style={[styles.btn, { backgroundColor: Colors.detailsColor2 }, { alignSelf: 'flex-end' }]}>
+          <TouchableOpacity
+            onPress={avaliar}
+            style={[
+              styles.btn,
+              { backgroundColor: Colors.detailsColor2 },
+              { alignSelf: 'flex-end' },
+            ]}
+          >
             <Text style={styles.btn_txt}>Finalizar</Text>
           </TouchableOpacity>
         </View>
       )}
-
     </>
   );
 };

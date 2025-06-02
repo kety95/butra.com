@@ -1,5 +1,9 @@
 import React, { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../factory/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import banco from '../../factory/firebase';
 
 export const UserContext = createContext();
 
@@ -7,36 +11,36 @@ export const UserProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
-    const carregarUsuario = async () => {
-      try {
-        const jsonValue = await AsyncStorage.getItem('@usuario');
-        if (jsonValue != null) {
-          setUsuario(JSON.parse(jsonValue));
-        }
-      } catch (e) {
-        console.error('Erro ao carregar usuário do AsyncStorage:', e);
-      }
-    };
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const uid = firebaseUser.uid;
+          const userDoc = await getDoc(doc(banco, 'users', uid));
+          const userData = userDoc.exists() ? { id: uid, ...userDoc.data() } : null;
 
-    carregarUsuario();
+          setUsuario(userData);
+          await AsyncStorage.setItem('@usuario', JSON.stringify(userData));
+        } catch (error) {
+          console.error('Erro ao buscar dados do usuário autenticado:', error);
+        }
+      } else {
+        // Deslogado
+        setUsuario(null);
+        await AsyncStorage.removeItem('@usuario');
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const atualizarUsuario = async (dados) => {
-    try {
-      setUsuario(dados);
-      await AsyncStorage.setItem('@usuario', JSON.stringify(dados));
-    } catch (e) {
-      console.error('Erro ao salvar usuário no AsyncStorage:', e);
-    }
+    setUsuario(dados);
+    await AsyncStorage.setItem('@usuario', JSON.stringify(dados));
   };
 
   const limparUsuario = async () => {
-    try {
-      await AsyncStorage.removeItem('@usuario');
-      setUsuario(null);
-    } catch (e) {
-      console.error('Erro ao limpar usuário no AsyncStorage:', e);
-    }
+    setUsuario(null);
+    await AsyncStorage.removeItem('@usuario');
   };
 
   return (

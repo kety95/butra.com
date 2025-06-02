@@ -11,7 +11,7 @@ import CriarAtividade from './criarAtividade'
 import Notificacoes from './notificacoes'
 import Login from './login'
 import UserData from './userData'
-import { AtividadesProvider } from '../context/AtividadesContext'
+import { AtividadesProvider } from '../context/MinhasAtividadesContext'
 import MinhasAtracoes from './minhasAtracoes'
 import { UserProvider } from '../context/UserContext';
 import Inscritos from './inscritos'

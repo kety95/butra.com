@@ -29,7 +29,7 @@ export const registrarAvaliacao = async (atividadeId, stars, description, select
   if (inscricaoDoc) {
     const inscricaoRef = doc(banco, 'inscriptions', inscricaoDoc.id);
     await updateDoc(inscricaoRef, {
-      reviewed: true,
+      review: false,
     });
   } else {
     throw new Error('Inscrição não encontrada');
@@ -38,14 +38,15 @@ export const registrarAvaliacao = async (atividadeId, stars, description, select
 
 export const getInscricoesDoUsuario = async () => {
   const userId = auth.currentUser?.uid;
+  console.log(userId)
   if (!userId) return [];
 
   const q = query(
     collection(banco, 'inscriptions'),
     where('userId', '==', userId),
-    where('reviewed', '!=', true)
+    where('review', '==', true)
   );
-  
+
   const snapshot = await getDocs(q);
 
   const inscricoes = await Promise.all(
@@ -61,7 +62,7 @@ export const getInscricoesDoUsuario = async () => {
       };
     })
   );
-
+  console.log(inscricoes)
   return inscricoes;
 };
 
@@ -87,7 +88,7 @@ export const inscreverAtividade = async (atividadeId, selectedDate) => {
     atividadeId,
     selectedDate,
     timestamp: new Date(),
-    reviewed: false
+    review: true
   });
 };
 
@@ -129,6 +130,8 @@ export const buscarDatasAtividade = async (atividadeId) => {
 };
 
 export const buscarAtividadesPorOrganizador = async (organizerId) => {
+  if (!organizerId) throw new Error('organizerId está undefined');
+
   const atividadesRef = collection(banco, 'activities');
   const q = query(atividadesRef, where('organizer', '==', organizerId));
   const snapshot = await getDocs(q);
