@@ -6,6 +6,7 @@ import ReviewCard from '../../components/reviewCard';
 import IconStar from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '../../constants/Colors';
 import { getReviewsByActivity, getUsersByRefs } from '../../services/firestore';
+import Toast from 'react-native-toast-message';
 
 const Avaliacoes = () => {
   const route = useRoute();
@@ -40,7 +41,10 @@ const Avaliacoes = () => {
         setReviews(reviewsWithUsers);
       } catch (error) {
         console.error('Erro ao buscar avaliações ou usuários:', error);
-        alert('Erro ao carregar avaliações.');
+              Toast.show({
+                type: 'error',
+                text1: 'Erro ao carregar avaliações.',
+              });
       } finally {
         setLoading(false);
       }

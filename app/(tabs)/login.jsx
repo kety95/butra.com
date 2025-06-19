@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, BackHandler } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, BackHandler } from 'react-native';
 import { Formik } from 'formik';
 import { useFocusEffect } from '@react-navigation/native';
 import BackButton from '../../components/backButton';
@@ -8,6 +8,7 @@ import { auth } from '../../factory/firebase';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { getDadosUsuario } from '../../services/firestore';
 import { UserContext } from '../context/UserContext';
+import Toast from 'react-native-toast-message';
 
 const Login = ({ navigation }) => {
   const REQUIRED_FIELD = "Campo obrigatório";
@@ -61,7 +62,10 @@ const Login = ({ navigation }) => {
               }
             } catch (error) {
               console.error('Erro ao fazer login:', error);
-              Alert.alert('Erro de login', 'Email ou senha inválidos.');
+              Toast.show({
+                type: 'error',
+                text1: 'Email ou senha inválidos',
+              });
             } finally {
               setSubmitting(false);
             }

@@ -13,7 +13,6 @@ const MinhasAtividades = () => {
     await carregarInscricoes();
     setRefreshing(false);
   };
-  // console.log(...minhasAtividades)
   if (minhasAtividades.length === 0) {
     return (
       <>

@@ -9,6 +9,7 @@ import BackButton from '../../components/backButton';
 import { useMinhasAtividades } from '../context/MinhasAtividadesContext';
 import DateCard from '../../components/dateCard';
 import { getReviewsCountByActivity } from '../../services/firestore'
+import Toast from 'react-native-toast-message';
 
 const DetalhesAtividade = ({ route }) => {
     const navigation = useNavigation();
@@ -40,27 +41,37 @@ const DetalhesAtividade = ({ route }) => {
         );
     }, [selectedDate, minhasAtividades, atividade.id]);
 
-
     const handleInscricao = async () => {
         if (!selectedDate) {
-            alert("Selecione uma data.");
+            Toast.show({
+                type: 'error',
+                text1: 'Selecione uma data.',
+            });
             return;
         }
 
         try {
             await inscreverAtividade(atividade, selectedDate);
-            alert('Você se inscreveu com sucesso!');
+            Toast.show({
+                type: 'success',
+                text1: 'Inscrição realizada com sucesso!',
+            });
             navigation.navigate('minhasAtividades');
         } catch (error) {
             console.error("Erro ao se inscrever:", error);
             if (error.message.includes("já inscrito")) {
-                alert("Você já está inscrito nessa atividade para esta data.");
+                Toast.show({
+                    type: 'error',
+                    text1: 'Você já está inscrito nesta data.',
+                });
             } else {
-                alert("Erro ao se inscrever. Tente novamente.");
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erro ao se inscrever. Tente novamente.',
+                });
             }
         }
     };
-
 
     const toggleDescription = () => {
         setIsExpanded(!isExpanded);

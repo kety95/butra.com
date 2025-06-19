@@ -6,6 +6,7 @@ import { formatDateToDisplay } from '../utils/dateUtils';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { Colors } from '../../constants/Colors';
 import { getAtividadesComReviews } from '../../services/firestore';
+import Toast from 'react-native-toast-message';
 
 const ListaAtividades = ({ route }) => {
   const navigation = useNavigation();
@@ -29,7 +30,10 @@ const ListaAtividades = ({ route }) => {
       })
       .catch(error => {
         console.error('Erro ao buscar dados:', error);
-        alert('Houve um erro ao buscar as atividades. Tente novamente mais tarde.');
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao buscar atividades',
+        });
       })
       .finally(() => setLoading(false));
   }, [date, location]);

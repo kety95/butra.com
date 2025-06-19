@@ -6,6 +6,7 @@ import DatePicker from 'react-native-modern-datepicker';
 import { Colors } from '../constants/Colors';
 import { adicionarDatasAtividade, buscarDatasAtividade } from '../services/firestore';
 import { toApiDate, formatDateToDisplay, minimunDate } from '@/app/utils/dateUtils';
+import Toast from 'react-native-toast-message';
 
 const CardAtracao = (props) => {
   const navigation = useNavigation();
@@ -36,7 +37,10 @@ const CardAtracao = (props) => {
 
     const existingFormatted = datasExistentes.map(d => toApiDate(d));
     if (existingFormatted.includes(apiFormatted)) {
-      alert('Data já existente', 'Essa data já está disponível para a atividade.');
+      Toast.show({
+        type: 'error',
+        text1: 'Essa data já está disponível para a atividade.',
+      });
       return;
     }
 
@@ -60,13 +64,20 @@ const CardAtracao = (props) => {
       const novasDatasApi = datas.map(toApiDate);
       await adicionarDatasAtividade(id, novasDatasApi);
 
-      alert('Datas adicionadas com sucesso!');
+      Toast.show({
+        type: 'success',
+        text1: 'Datas adicionadas com sucesso!',
+      });
+
       setDatasExistentes(prev => [...prev, ...novasDatasApi]);
       setDatas([]);
       setShowDatePicker(false);
     } catch (error) {
       console.error('Erro ao salvar datas:', error);
-      alert('Erro', 'Não foi possível salvar as datas. Tente novamente.');
+      Toast.show({
+        type: 'error',
+        text1: 'Não foi possível salvar as datas. Tente novamente.',
+      });
     }
   };
 

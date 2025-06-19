@@ -9,6 +9,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { TextInputMask } from 'react-native-masked-text';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { UserContext } from '../context/UserContext';
+import Toast from 'react-native-toast-message';
 
 const Cadastro = ({ navigation, route }) => {
   const REQUIRED_FIELD = "Campo obrigatório";
@@ -74,7 +75,10 @@ const Cadastro = ({ navigation, route }) => {
               }
             } catch (error) {
               console.error('Erro ao cadastrar:', error);
-              alert('Erro ao cadastrar');
+              Toast.show({
+                type: 'error',
+                text1: 'Erro ao cadastrar',
+              });
             } finally {
               setSubmitting(false);
             }

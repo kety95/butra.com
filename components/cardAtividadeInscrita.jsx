@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, TextInput } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import StarIcon from 'react-native-vector-icons/FontAwesome';
 import React from 'react';
@@ -6,6 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useMinhasAtividades } from '../app/context/MinhasAtividadesContext';
 import { formatDateToDisplay } from '../app/utils/dateUtils';
 import { Colors } from '../constants/Colors';
+import ConfirmModal from './ConfirmModal';
+import Toast from 'react-native-toast-message';
 
 const CardAtividadeInscrita = ({
   atividadeId,
@@ -24,38 +26,42 @@ const CardAtividadeInscrita = ({
   const [avaliando, setAvaliando] = React.useState(false);
   const [avaliacaoTexto, setAvaliacaoTexto] = React.useState('');
   const [nota, setNota] = React.useState(0);
+  const [showConfirmModal, setShowConfirmModal] = React.useState(false);
 
   const handleCancelar = async () => {
     try {
-      Alert.alert(
-        "Cancelar inscrição",
-        "Deseja cancelar sua inscrição nesta atividade?",
-        [
-          { text: "Não", style: "cancel" },
-          {
-            text: "Sim",
-            onPress: async () => {
-              await cancelarInscricao(atividadeId, selectedDate);
-              Alert.alert('Inscrição cancelada!', 'Você não está mais inscrito nesta atividade');
-            }
-          }
-        ]
-      );
+      await cancelarInscricao(atividadeId, selectedDate);
+      Toast.show({
+        type: 'success',
+        text1: 'Inscrição cancelada!',
+      });
     } catch (e) {
       console.error("Erro ao cancelar inscrição:", e);
-      alert("Erro ao cancelar inscrição.");
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao cancelar inscrição.',
+      });
+    } finally {
+      setShowConfirmModal(false);
     }
   };
 
   const avaliar = async () => {
     if (nota === 0 || avaliacaoTexto.trim() === '') {
-      Alert.alert("Preencha todos os campos", "Dê uma nota e escreva sua avaliação.");
+      Toast.show({
+        type: 'error',
+        text1: "Dê uma nota e escreva sua avaliação.",
+      });
       return;
     }
 
     await avaliarAtividade(atividadeId, nota, avaliacaoTexto, selectedDate);
 
-    alert("Sua avaliação foi registrada.");
+    Toast.show({
+      type: 'success',
+      text1: "Sua avaliação foi registrada.",
+    });
+    
     setAvaliando(false);
     setNota(0);
     setAvaliacaoTexto('');
@@ -68,9 +74,17 @@ const CardAtividadeInscrita = ({
         <Icon name="check" color={'white'} size={18} />
       </View>
 
-      <TouchableOpacity onPress={handleCancelar}>
+      <TouchableOpacity onPress={() => setShowConfirmModal(true)}>
         <Text style={styles.cancel}>Cancelar</Text>
       </TouchableOpacity>
+
+      <ConfirmModal
+        visible={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleCancelar}
+        message="Deseja cancelar sua inscrição nesta atividade?"
+      />
+
     </View>
   );
 

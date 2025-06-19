@@ -10,6 +10,7 @@ import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-modern-datepicker';
 import { UserContext } from '../context/UserContext';
 import { minimunDate, toApiDate, formatDateToDisplay } from '../utils/dateUtils';
+import Toast from 'react-native-toast-message';
 
 const CriarAtividade = ({ navigation }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -44,11 +45,19 @@ const CriarAtividade = ({ navigation }) => {
 
       await criarAtividade(dados);
 
-      alert('Atividade criada com sucesso!');
+      Toast.show({
+        type: 'success',
+        text1: 'Atividade criada com sucesso!',
+      });
+
       resetForm();
       navigation.navigate('minhasAtracoes')
+
     } catch (error) {
-      alert('Erro ao criar atividade');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao criar atividade',
+      });
     } finally {
       setSubmitting(false);
     }
@@ -143,7 +152,7 @@ const CriarAtividade = ({ navigation }) => {
                           setFieldValue('dates', [...values.dates, date]);
                         }
                         setShowDatePicker(false);
-                      }}                      
+                      }}
                       options={{
                         backgroundColor: '#fff',
                         textHeaderColor: Colors.mainColor,
