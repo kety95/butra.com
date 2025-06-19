@@ -68,7 +68,7 @@ export const getInscricoesDoUsuario = async () => {
 
 export const inscreverAtividade = async (atividadeId, selectedDate) => {
   const userId = auth.currentUser?.uid;
-  if (!userId) return;
+  if (!userId) throw new Error("Usuário não autenticado.");
 
   const q = query(
     collection(banco, 'inscriptions'),
@@ -78,9 +78,10 @@ export const inscreverAtividade = async (atividadeId, selectedDate) => {
   );
 
   const snapshot = await getDocs(q);
+
   if (!snapshot.empty) {
-    alert('Você já está inscrito nesta atividade para essa data!');
-    return;
+    console.log('Inscrição duplicada')
+    throw new Error("Usuário já inscrito nesta atividade para esta data.");
   }
 
   await addDoc(collection(banco, 'inscriptions'), {

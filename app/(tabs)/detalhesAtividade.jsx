@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import IconLocation from 'react-native-vector-icons/EvilIcons';
 import IconStar from 'react-native-vector-icons/FontAwesome';
@@ -33,18 +33,17 @@ const DetalhesAtividade = ({ route }) => {
         fetchReviewsCount();
     }, [atividade.id]);
 
-    const jaInscrito = selectedDate && minhasAtividades.some(
-        (a) => a.id === atividade.id && a.selectedDate === selectedDate
-    );
+    const jaInscrito = useMemo(() => {
+        if (!selectedDate) return false;
+        return minhasAtividades.some(
+            (a) => a.id === atividade.id && a.selectedDate === selectedDate
+        );
+    }, [selectedDate, minhasAtividades, atividade.id]);
+
 
     const handleInscricao = async () => {
         if (!selectedDate) {
             alert("Selecione uma data.");
-            return;
-        }
-
-        if (jaInscrito) {
-            alert("Você já está inscrito nessa atividade para esta data.");
             return;
         }
 
@@ -54,7 +53,11 @@ const DetalhesAtividade = ({ route }) => {
             navigation.navigate('minhasAtividades');
         } catch (error) {
             console.error("Erro ao se inscrever:", error);
-            alert("Erro ao se inscrever. Tente novamente.");
+            if (error.message.includes("já inscrito")) {
+                alert("Você já está inscrito nessa atividade para esta data.");
+            } else {
+                alert("Erro ao se inscrever. Tente novamente.");
+            }
         }
     };
 

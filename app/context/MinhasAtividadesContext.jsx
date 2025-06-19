@@ -39,9 +39,18 @@ export const AtividadesProvider = ({ children }) => {
   };
 
   const inscreverAtividade = async (atividade, selectedDate) => {
+    const jaInscrito = minhasAtividades.some(
+      (a) => a.id === atividade.id && a.selectedDate === selectedDate
+    );
+
+    if (jaInscrito) {
+      throw new Error("Usuário já inscrito para esta data.");
+    }
+
     await inscreverAtividadeNoFirestore(atividade.id, selectedDate);
     await carregarInscricoes();
   };
+
 
   const cancelarInscricao = async (atividadeId, selectedDate) => {
     await cancelarInscricaoNoFirestore(atividadeId, selectedDate);
