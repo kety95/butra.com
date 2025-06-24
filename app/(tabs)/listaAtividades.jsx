@@ -40,7 +40,7 @@ const ListaAtividades = ({ route }) => {
 
 
   return (
-    <View>
+    <View View style={{ flex: 1 }}>
       <View style={styles.div}>
         <View style={styles.backBar}>
           <View style={styles.descBar}>
@@ -55,7 +55,7 @@ const ListaAtividades = ({ route }) => {
       </View>
 
       <View style={styles.separator} />
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View contentContainerStyle={styles.scrollContainer} style={{ flex: 1 }}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : atividades.length === 0 ? (
@@ -64,12 +64,13 @@ const ListaAtividades = ({ route }) => {
           </View>
         ) : (
           <FlatList
+            style={{ flex: 1 }}
             data={atividades}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => <CardAtividadeListada {...item} />}
           />
         )}
-      </ScrollView>
+      </View>
     </View>
   );
 };
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   div: {
-    paddingBottom: 50,
+    paddingBottom: 30,
   },
   separator: {
     borderBottomWidth: 1,
