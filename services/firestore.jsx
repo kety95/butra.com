@@ -157,8 +157,13 @@ export const getUsersByIds = async (userIds) => {
 export const buscarUsuariosAgrupadosPorData = async (atividadeId) => {
   const inscricoes = await buscarInscritos(atividadeId);
 
+  const hoje = new Date();
+  const hojeISO = hoje.toISOString().split('T')[0];
+
   const usuariosComData = await Promise.all(inscricoes.map(async (inscricao) => {
     if (!inscricao.userId || !inscricao.selectedDate) return null;
+
+    if (inscricao.selectedDate < hojeISO) return null;
 
     const userDoc = await getDoc(doc(banco, 'users', inscricao.userId));
     if (!userDoc.exists()) return null;
