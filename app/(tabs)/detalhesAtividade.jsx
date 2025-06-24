@@ -114,12 +114,12 @@ const DetalhesAtividade = ({ route }) => {
                     <AcessibilidadeInfo accessibilities={atividade.accessibilities} />
 
                     <Text style={styles.h2}>Localização</Text>
-                    <View style={styles.adress}>
+                    <View style={styles.address}>
                         <Text style={styles.toggleButtonText}>Endereço</Text>
                         <IconLocation name="location" color={Colors.detailsColor} size={20} />
                     </View>
-                    <Text>{atividade.adress}</Text>
-
+                    <Text>{atividade.address}</Text>
+                    
                     {atividade.dates && atividade.dates.length > 0 && (
                         <>
                             <Text style={styles.h2}>Datas</Text>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         marginVertical: 10,
     },
-    adress: {
+    address: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingBottom: 5,

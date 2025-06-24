@@ -4,14 +4,14 @@ import { Colors } from '../constants/Colors';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 
-const CardAtividadeListada = ({ id, title, image, reviewsCount, description, accessibilities, location, adress, dates }) => {
+const CardAtividadeListada = ({ id, title, image, reviewsCount, description, accessibilities, location, address, dates }) => {
   const navigation = useNavigation();
-
+  
   return (
     <TouchableOpacity 
       style={styles.card} 
       onPress={() => navigation.navigate('detalhesatividade', 
-        { atividade: { id, title, image, description, accessibilities, location, adress, dates }, 
+        { atividade: { id, title, image, description, accessibilities, location, address, dates }, 
         reviewsCount  })}
     >
       <Image source={{ uri: image }} style={styles.image} />

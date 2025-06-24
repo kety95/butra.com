@@ -10,7 +10,7 @@ import Toast from 'react-native-toast-message';
 
 const CardAtracao = (props) => {
   const navigation = useNavigation();
-  const { id, title, image, reviewsCount, description, accessibilities, location, adress, dates } = props.atracao;
+  const { id, title, image, reviewsCount, description, accessibilities, location, address, dates } = props.atracao;
   const [datasExistentes, setDatasExistentes] = useState([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [datas, setDatas] = useState([]);
@@ -96,7 +96,7 @@ const CardAtracao = (props) => {
                 description,
                 accessibilities,
                 location,
-                adress,
+                address,
                 dates: datasFuturas
               },
               reviewsCount,

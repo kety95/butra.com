@@ -38,7 +38,6 @@ const ListaAtividades = ({ route }) => {
       .finally(() => setLoading(false));
   }, [date, location]);
 
-
   return (
     <View View style={{ flex: 1 }}>
       <View style={styles.div}>

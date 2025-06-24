@@ -17,7 +17,7 @@ const CardAtividadeInscrita = ({
   description,
   accessibilities,
   location,
-  adress,
+  address,
   selectedDate,
 }) => {
   const navigation = useNavigation();
@@ -116,7 +116,7 @@ const CardAtividadeInscrita = ({
                 description,
                 accessibilities,
                 location,
-                adress,
+                address,
               },
               reviewsCount,
             })
