@@ -280,11 +280,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#f9f9f9',
+    width: 250,
   },
   picker: {
     height: 50,
@@ -335,7 +331,7 @@ const styles = StyleSheet.create({
   },
   dateItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between',  
     alignItems: 'center',
     backgroundColor: '#f1f1f1',
     padding: 10,
